@@ -78,8 +78,6 @@ DECLARE_GLOBAL_DATA_PTR;
 
 #define DISP0_PWR_EN	IMX_GPIO_NR(1, 21)
 
-#define ENV_TEST
-
 int dram_init(void)
 {
 	gd->ram_size = imx_ddr_size();
@@ -1148,9 +1146,7 @@ int board_late_init(void)
 		setenv("board_rev", "MX6Q");
 	else if (is_cpu_type(MXC_CPU_MX6DL) || is_cpu_type(MXC_CPU_MX6SOLO))
 		setenv("board_rev", "MX6DL");
-#endif
-
-#ifdef ENV_TEST
+	printf("\n\n\n\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n\n\n\n\n");
 	setenv("test", "test_in_c_file");
 #endif
 

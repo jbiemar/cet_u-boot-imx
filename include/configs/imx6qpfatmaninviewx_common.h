@@ -145,7 +145,6 @@
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	CONFIG_MFG_ENV_SETTINGS \
 	CONFIG_TEST_ENV_SETTINGS \
-	CONFIG_HDMI_ENV_SETTINGS \
 	"epdc_waveform=epdc_splash.bin\0" \
 	"script=boot.scr\0" \
 	"image=zImage\0" \
@@ -179,8 +178,7 @@
 		"fi\0" \
 	EMMC_ENV	  \
 	"smp=" CONFIG_SYS_NOSMP "\0"\
-	"mmcargs=setenv bootargs console=${console},${baudrate} ${smp} " \
-		"root=${mmcroot}\0" \
+	CONFIG_HDMI_ENV_SETTINGS \
 	"loadbootscript=" \
 		"fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${script};\0" \
 	"bootscript=echo Running bootscript from mmc ...; " \

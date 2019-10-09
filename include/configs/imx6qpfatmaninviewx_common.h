@@ -74,7 +74,11 @@
 
 #define CONFIG_TEST_ENV_SETTINGS \
 	"test2=0x12\0" \
-
+	
+#define CONFIG_HDMI_ENV_SETTINGS \
+	"video=mxcfb0:dev=hdmi,1920x1080M@60,bpp=32\0" \
+	"mmcargs=setenv bootargs console=${console},${baudrate} video=${video} root=${mmcroot}\0" \
+	
 #ifdef CONFIG_SUPPORT_EMMC_BOOT
 #define EMMC_ENV \
 	"emmcdev=2\0" \
@@ -109,6 +113,7 @@
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	CONFIG_MFG_ENV_SETTINGS \
 	CONFIG_TEST_ENV_SETTINGS \
+	CONFIG_HDMI_ENV_SETTINGS \
 	"fdt_addr=0x18000000\0" \
 	"fdt_high=0xffffffff\0"	  \
 	"bootargs=console=" CONFIG_CONSOLE_DEV ",115200 ubi.mtd=5 "  \
@@ -123,6 +128,7 @@
 #define CONFIG_EXTRA_ENV_SETTINGS \
 		CONFIG_MFG_ENV_SETTINGS \
 		CONFIG_TEST_ENV_SETTINGS \
+		CONFIG_HDMI_ENV_SETTINGS \
 		"fdt_addr=0x18000000\0" \
 		"fdt_high=0xffffffff\0"   \
 		"bootargs=console=" CONFIG_CONSOLE_DEV ",115200 \0"\
@@ -139,6 +145,7 @@
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	CONFIG_MFG_ENV_SETTINGS \
 	CONFIG_TEST_ENV_SETTINGS \
+	CONFIG_HDMI_ENV_SETTINGS \
 	"epdc_waveform=epdc_splash.bin\0" \
 	"script=boot.scr\0" \
 	"image=zImage\0" \

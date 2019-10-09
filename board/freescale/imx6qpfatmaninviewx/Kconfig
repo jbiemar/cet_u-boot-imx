@@ -1,0 +1,12 @@
+if TARGET_IMX6QPFATMANINVIEWX
+
+config SYS_BOARD
+	default "imx6qpfatmaninviewx"
+
+config SYS_VENDOR
+	default "freescale"
+
+config SYS_CONFIG_NAME
+	default "imx6qpfatmaninviewx"
+
+endif

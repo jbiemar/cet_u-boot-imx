@@ -85,6 +85,12 @@ config TARGET_MX6QARM2
 	select DM
 	select DM_THERMAL
 
+config TARGET_IMX6QPFATMANINVIEWX
+	bool "Support imx6qp fatman inviewx board"
+	select MX6QP
+	select DM
+	select DM_THERMAL
+
 config TARGET_MX6QSABREAUTO
 	bool "mx6qsabreauto"
 	select DM
@@ -278,5 +284,6 @@ source "board/wandboard/Kconfig"
 source "board/warp/Kconfig"
 source "board/freescale/mx6dqscm/Kconfig"
 source "board/freescale/mx6sxscm/Kconfig"
+source "board/freescale/imx6qpfatmaninviewx/Kconfig"
 
 endif

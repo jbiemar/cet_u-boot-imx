@@ -76,6 +76,7 @@ DECLARE_GLOBAL_DATA_PTR;
 
 #define I2C_PAD MUX_PAD_CTRL(I2C_PAD_CTRL)
 
+// ALTANEOS CHECK
 #define DISP0_PWR_EN	IMX_GPIO_NR(1, 21)
 
 int dram_init(void)
@@ -84,11 +85,13 @@ int dram_init(void)
 	return 0;
 }
 
+// ALTANEOS CHECK
 static iomux_v3_cfg_t const uart1_pads[] = {
 	MX6_PAD_CSI0_DAT10__UART1_TX_DATA | MUX_PAD_CTRL(UART_PAD_CTRL),
 	MX6_PAD_CSI0_DAT11__UART1_RX_DATA | MUX_PAD_CTRL(UART_PAD_CTRL),
 };
 
+// ALTANEOS CHECK
 static iomux_v3_cfg_t const enet_pads[] = {
 	MX6_PAD_ENET_MDIO__ENET_MDIO		| MUX_PAD_CTRL(ENET_PAD_CTRL),
 	MX6_PAD_ENET_MDC__ENET_MDC		| MUX_PAD_CTRL(ENET_PAD_CTRL),
@@ -113,6 +116,8 @@ static void setup_iomux_enet(void)
 {
 	imx_iomux_v3_setup_multiple_pads(enet_pads, ARRAY_SIZE(enet_pads));
 
+// ALTANEOS REPLACE BY RESET OF ETHERNET SWITCH KSZ8995
+
 	/* Reset AR8031 PHY */
 	gpio_direction_output(IMX_GPIO_NR(1, 25) , 0);
 	mdelay(10);
@@ -120,6 +125,7 @@ static void setup_iomux_enet(void)
 	udelay(100);
 }
 
+// ALTANEOS REMOVE - NOT USED
 static iomux_v3_cfg_t const usdhc2_pads[] = {
 	MX6_PAD_SD2_CLK__SD2_CLK	| MUX_PAD_CTRL(USDHC_PAD_CTRL),
 	MX6_PAD_SD2_CMD__SD2_CMD	| MUX_PAD_CTRL(USDHC_PAD_CTRL),
@@ -134,6 +140,7 @@ static iomux_v3_cfg_t const usdhc2_pads[] = {
 	MX6_PAD_NANDF_D2__GPIO2_IO02	| MUX_PAD_CTRL(NO_PAD_CTRL), /* CD */
 };
 
+// ALTANEOS USED FOR EMMC1 - CD (CARD DETECT) IS NOT IMPLEMENTED ONBOARD
 static iomux_v3_cfg_t const usdhc3_pads[] = {
 	MX6_PAD_SD3_CLK__SD3_CLK   | MUX_PAD_CTRL(USDHC_PAD_CTRL),
 	MX6_PAD_SD3_CMD__SD3_CMD   | MUX_PAD_CTRL(USDHC_PAD_CTRL),
@@ -148,6 +155,7 @@ static iomux_v3_cfg_t const usdhc3_pads[] = {
 	MX6_PAD_NANDF_D0__GPIO2_IO00    | MUX_PAD_CTRL(NO_PAD_CTRL), /* CD */
 };
 
+// ALTANEOS USED FOR EMMC2
 static iomux_v3_cfg_t const usdhc4_pads[] = {
 	MX6_PAD_SD4_CLK__SD4_CLK   | MUX_PAD_CTRL(USDHC_PAD_CTRL),
 	MX6_PAD_SD4_CMD__SD4_CMD   | MUX_PAD_CTRL(USDHC_PAD_CTRL),
@@ -161,6 +169,7 @@ static iomux_v3_cfg_t const usdhc4_pads[] = {
 	MX6_PAD_SD4_DAT7__SD4_DATA7 | MUX_PAD_CTRL(USDHC_PAD_CTRL),
 };
 
+//ALTANEOS CHECK : CONNECTED TO KSZ8895 
 #ifdef CONFIG_MXC_SPI
 static iomux_v3_cfg_t const ecspi1_pads[] = {
 	MX6_PAD_KEY_COL0__ECSPI1_SCLK | MUX_PAD_CTRL(SPI_PAD_CTRL),
@@ -180,6 +189,7 @@ int board_spi_cs_gpio(unsigned bus, unsigned cs)
 }
 #endif
 
+// ALTANEOS CHECK
 static iomux_v3_cfg_t const rgb_pads[] = {
 	MX6_PAD_DI0_DISP_CLK__IPU1_DI0_DISP_CLK | MUX_PAD_CTRL(NO_PAD_CTRL),
 	MX6_PAD_DI0_PIN15__IPU1_DI0_PIN15 | MUX_PAD_CTRL(NO_PAD_CTRL),
@@ -216,9 +226,11 @@ static iomux_v3_cfg_t const rgb_pads[] = {
 static void enable_rgb(struct display_info_t const *dev)
 {
 	imx_iomux_v3_setup_multiple_pads(rgb_pads, ARRAY_SIZE(rgb_pads));
+// ALTANEOS CHECK
 	gpio_direction_output(DISP0_PWR_EN, 1);
 }
 
+// ALTANEOS CHECK
 static struct i2c_pads_info i2c_pad_info1 = {
 	.scl = {
 		.i2c_mode = MX6_PAD_KEY_COL3__I2C2_SCL | I2C_PAD,
@@ -232,16 +244,19 @@ static struct i2c_pads_info i2c_pad_info1 = {
 	}
 };
 
+// ALTANEOS NOT USED
 iomux_v3_cfg_t const pcie_pads[] = {
 	MX6_PAD_EIM_D19__GPIO3_IO19 | MUX_PAD_CTRL(NO_PAD_CTRL),	/* POWER */
 	MX6_PAD_GPIO_17__GPIO7_IO12 | MUX_PAD_CTRL(NO_PAD_CTRL),	/* RESET */
 };
 
+// ALTANEOS NOT USED
 static void setup_pcie(void)
 {
 	imx_iomux_v3_setup_multiple_pads(pcie_pads, ARRAY_SIZE(pcie_pads));
 }
 
+// ALTANEOS CHECK
 iomux_v3_cfg_t const di0_pads[] = {
 	MX6_PAD_DI0_DISP_CLK__IPU1_DI0_DISP_CLK,	/* DISP0_CLK */
 	MX6_PAD_DI0_PIN2__IPU1_DI0_PIN02,		/* DISP0_HSYNC */
@@ -253,54 +268,7 @@ static void setup_iomux_uart(void)
 	imx_iomux_v3_setup_multiple_pads(uart1_pads, ARRAY_SIZE(uart1_pads));
 }
 
-#if defined(CONFIG_MX6DL) && defined(CONFIG_MXC_EPDC)
-static iomux_v3_cfg_t const epdc_enable_pads[] = {
-	MX6_PAD_EIM_A16__EPDC_DATA00	| MUX_PAD_CTRL(EPDC_PAD_CTRL),
-	MX6_PAD_EIM_DA10__EPDC_DATA01	| MUX_PAD_CTRL(EPDC_PAD_CTRL),
-	MX6_PAD_EIM_DA12__EPDC_DATA02	| MUX_PAD_CTRL(EPDC_PAD_CTRL),
-	MX6_PAD_EIM_DA11__EPDC_DATA03	| MUX_PAD_CTRL(EPDC_PAD_CTRL),
-	MX6_PAD_EIM_LBA__EPDC_DATA04	| MUX_PAD_CTRL(EPDC_PAD_CTRL),
-	MX6_PAD_EIM_EB2__EPDC_DATA05	| MUX_PAD_CTRL(EPDC_PAD_CTRL),
-	MX6_PAD_EIM_CS0__EPDC_DATA06	| MUX_PAD_CTRL(EPDC_PAD_CTRL),
-	MX6_PAD_EIM_RW__EPDC_DATA07	| MUX_PAD_CTRL(EPDC_PAD_CTRL),
-	MX6_PAD_EIM_A21__EPDC_GDCLK	| MUX_PAD_CTRL(EPDC_PAD_CTRL),
-	MX6_PAD_EIM_A22__EPDC_GDSP	| MUX_PAD_CTRL(EPDC_PAD_CTRL),
-	MX6_PAD_EIM_A23__EPDC_GDOE	| MUX_PAD_CTRL(EPDC_PAD_CTRL),
-	MX6_PAD_EIM_A24__EPDC_GDRL	| MUX_PAD_CTRL(EPDC_PAD_CTRL),
-	MX6_PAD_EIM_D31__EPDC_SDCLK_P	| MUX_PAD_CTRL(EPDC_PAD_CTRL),
-	MX6_PAD_EIM_D27__EPDC_SDOE	| MUX_PAD_CTRL(EPDC_PAD_CTRL),
-	MX6_PAD_EIM_DA1__EPDC_SDLE	| MUX_PAD_CTRL(EPDC_PAD_CTRL),
-	MX6_PAD_EIM_EB1__EPDC_SDSHR	| MUX_PAD_CTRL(EPDC_PAD_CTRL),
-	MX6_PAD_EIM_DA2__EPDC_BDR0	| MUX_PAD_CTRL(EPDC_PAD_CTRL),
-	MX6_PAD_EIM_DA4__EPDC_SDCE0	| MUX_PAD_CTRL(EPDC_PAD_CTRL),
-	MX6_PAD_EIM_DA5__EPDC_SDCE1	| MUX_PAD_CTRL(EPDC_PAD_CTRL),
-	MX6_PAD_EIM_DA6__EPDC_SDCE2	| MUX_PAD_CTRL(EPDC_PAD_CTRL),
-};
-
-static iomux_v3_cfg_t const epdc_disable_pads[] = {
-	MX6_PAD_EIM_A16__GPIO2_IO22,
-	MX6_PAD_EIM_DA10__GPIO3_IO10,
-	MX6_PAD_EIM_DA12__GPIO3_IO12,
-	MX6_PAD_EIM_DA11__GPIO3_IO11,
-	MX6_PAD_EIM_LBA__GPIO2_IO27,
-	MX6_PAD_EIM_EB2__GPIO2_IO30,
-	MX6_PAD_EIM_CS0__GPIO2_IO23,
-	MX6_PAD_EIM_RW__GPIO2_IO26,
-	MX6_PAD_EIM_A21__GPIO2_IO17,
-	MX6_PAD_EIM_A22__GPIO2_IO16,
-	MX6_PAD_EIM_A23__GPIO6_IO06,
-	MX6_PAD_EIM_A24__GPIO5_IO04,
-	MX6_PAD_EIM_D31__GPIO3_IO31,
-	MX6_PAD_EIM_D27__GPIO3_IO27,
-	MX6_PAD_EIM_DA1__GPIO3_IO01,
-	MX6_PAD_EIM_EB1__GPIO2_IO29,
-	MX6_PAD_EIM_DA2__GPIO3_IO02,
-	MX6_PAD_EIM_DA4__GPIO3_IO04,
-	MX6_PAD_EIM_DA5__GPIO3_IO05,
-	MX6_PAD_EIM_DA6__GPIO3_IO06,
-};
-#endif
-
+// ALTANEOS REMOVE SDHC2
 #ifdef CONFIG_FSL_ESDHC
 struct fsl_esdhc_cfg usdhc_cfg[3] = {
 	{USDHC2_BASE_ADDR},
@@ -308,6 +276,7 @@ struct fsl_esdhc_cfg usdhc_cfg[3] = {
 	{USDHC4_BASE_ADDR},
 };
 
+// ALTANEOS NOT USED
 #define USDHC2_CD_GPIO	IMX_GPIO_NR(2, 2)
 #define USDHC3_CD_GPIO	IMX_GPIO_NR(2, 0)
 
@@ -321,6 +290,7 @@ int mmc_map_to_kernel_blk(int devno)
 	return devno + 1;
 }
 
+// ALTANEOS REPLACE BY ALWAYS TRUE
 int board_mmc_getcd(struct mmc *mmc)
 {
 	struct fsl_esdhc_cfg *cfg = (struct fsl_esdhc_cfg *)mmc->priv;
@@ -341,6 +311,7 @@ int board_mmc_getcd(struct mmc *mmc)
 	return ret;
 }
 
+// ALTANEOS CHECK, REMOVE SDHC2 and CD HANDLING
 int board_mmc_init(bd_t *bis)
 {
 #ifndef CONFIG_SPL_BUILD
@@ -427,225 +398,6 @@ int board_mmc_init(bd_t *bis)
 }
 #endif
 
-#if defined(CONFIG_MX6DL) && defined(CONFIG_MXC_EPDC)
-vidinfo_t panel_info = {
-	.vl_refresh = 85,
-	.vl_col = 800,
-	.vl_row = 600,
-	.vl_pixclock = 26666667,
-	.vl_left_margin = 8,
-	.vl_right_margin = 100,
-	.vl_upper_margin = 4,
-	.vl_lower_margin = 8,
-	.vl_hsync = 4,
-	.vl_vsync = 1,
-	.vl_sync = 0,
-	.vl_mode = 0,
-	.vl_flag = 0,
-	.vl_bpix = 3,
-	.cmap = 0,
-};
-
-struct epdc_timing_params panel_timings = {
-	.vscan_holdoff = 4,
-	.sdoed_width = 10,
-	.sdoed_delay = 20,
-	.sdoez_width = 10,
-	.sdoez_delay = 20,
-	.gdclk_hp_offs = 419,
-	.gdsp_offs = 20,
-	.gdoe_offs = 0,
-	.gdclk_offs = 5,
-	.num_ce = 1,
-};
-
-static void setup_epdc_power(void)
-{
-	/* Setup epdc voltage */
-
-	/* EIM_A17 - GPIO2[21] for PWR_GOOD status */
-	imx_iomux_v3_setup_pad(MX6_PAD_EIM_A17__GPIO2_IO21 |
-				MUX_PAD_CTRL(EPDC_PAD_CTRL));
-	/* Set as input */
-	gpio_direction_input(IMX_GPIO_NR(2, 21));
-
-	/* EIM_D17 - GPIO3[17] for VCOM control */
-	imx_iomux_v3_setup_pad(MX6_PAD_EIM_D17__GPIO3_IO17 |
-				MUX_PAD_CTRL(EPDC_PAD_CTRL));
-
-	/* Set as output */
-	gpio_direction_output(IMX_GPIO_NR(3, 17), 1);
-
-	/* EIM_D20 - GPIO3[20] for EPD PMIC WAKEUP */
-	imx_iomux_v3_setup_pad(MX6_PAD_EIM_D20__GPIO3_IO20 |
-				MUX_PAD_CTRL(EPDC_PAD_CTRL));
-	/* Set as output */
-	gpio_direction_output(IMX_GPIO_NR(3, 20), 1);
-
-	/* EIM_A18 - GPIO2[20] for EPD PWR CTL0 */
-	imx_iomux_v3_setup_pad(MX6_PAD_EIM_A18__GPIO2_IO20 |
-				MUX_PAD_CTRL(EPDC_PAD_CTRL));
-	/* Set as output */
-	gpio_direction_output(IMX_GPIO_NR(2, 20), 1);
-}
-
-static void epdc_enable_pins(void)
-{
-	/* epdc iomux settings */
-	imx_iomux_v3_setup_multiple_pads(epdc_enable_pads,
-				ARRAY_SIZE(epdc_enable_pads));
-}
-
-static void epdc_disable_pins(void)
-{
-	/* Configure MUX settings for EPDC pins to GPIO */
-	imx_iomux_v3_setup_multiple_pads(epdc_disable_pads,
-				ARRAY_SIZE(epdc_disable_pads));
-}
-
-static void setup_epdc(void)
-{
-	unsigned int reg;
-	struct mxc_ccm_reg *ccm_regs = (struct mxc_ccm_reg *)CCM_BASE_ADDR;
-
-	/*** epdc Maxim PMIC settings ***/
-
-	/* EPDC PWRSTAT - GPIO2[21] for PWR_GOOD status */
-	imx_iomux_v3_setup_pad(MX6_PAD_EIM_A17__GPIO2_IO21 |
-				MUX_PAD_CTRL(EPDC_PAD_CTRL));
-
-	/* EPDC VCOM0 - GPIO3[17] for VCOM control */
-	imx_iomux_v3_setup_pad(MX6_PAD_EIM_D17__GPIO3_IO17 |
-				MUX_PAD_CTRL(EPDC_PAD_CTRL));
-
-	/* UART4 TXD - GPIO3[20] for EPD PMIC WAKEUP */
-	imx_iomux_v3_setup_pad(MX6_PAD_EIM_D20__GPIO3_IO20 |
-				MUX_PAD_CTRL(EPDC_PAD_CTRL));
-
-	/* EIM_A18 - GPIO2[20] for EPD PWR CTL0 */
-	imx_iomux_v3_setup_pad(MX6_PAD_EIM_A18__GPIO2_IO20 |
-				MUX_PAD_CTRL(EPDC_PAD_CTRL));
-
-	/*** Set pixel clock rates for EPDC ***/
-
-	/* EPDC AXI clk (IPU2_CLK) from PFD_400M, set to 396/2 = 198MHz */
-	reg = readl(&ccm_regs->cscdr3);
-	reg &= ~0x7C000;
-	reg |= (1 << 16) | (1 << 14);
-	writel(reg, &ccm_regs->cscdr3);
-
-	/* EPDC AXI clk enable */
-	reg = readl(&ccm_regs->CCGR3);
-	reg |= 0x00C0;
-	writel(reg, &ccm_regs->CCGR3);
-
-	/* EPDC PIX clk (IPU2_DI1_CLK) from PLL5, set to 650/4/6 = ~27MHz */
-	reg = readl(&ccm_regs->cscdr2);
-	reg &= ~0x3FE00;
-	reg |= (2 << 15) | (5 << 12);
-	writel(reg, &ccm_regs->cscdr2);
-
-	/* PLL5 enable (defaults to 650) */
-	reg = readl(&ccm_regs->analog_pll_video);
-	reg &= ~((1 << 16) | (1 << 12));
-	reg |= (1 << 13);
-	writel(reg, &ccm_regs->analog_pll_video);
-
-	/* EPDC PIX clk enable */
-	reg = readl(&ccm_regs->CCGR3);
-	reg |= 0x0C00;
-	writel(reg, &ccm_regs->CCGR3);
-
-	panel_info.epdc_data.wv_modes.mode_init = 0;
-	panel_info.epdc_data.wv_modes.mode_du = 1;
-	panel_info.epdc_data.wv_modes.mode_gc4 = 3;
-	panel_info.epdc_data.wv_modes.mode_gc8 = 2;
-	panel_info.epdc_data.wv_modes.mode_gc16 = 2;
-	panel_info.epdc_data.wv_modes.mode_gc32 = 2;
-
-	panel_info.epdc_data.epdc_timings = panel_timings;
-
-	setup_epdc_power();
-}
-
-void epdc_power_on(void)
-{
-	unsigned int reg;
-	struct gpio_regs *gpio_regs = (struct gpio_regs *)GPIO2_BASE_ADDR;
-
-	/* Set EPD_PWR_CTL0 to high - enable EINK_VDD (3.15) */
-	gpio_set_value(IMX_GPIO_NR(2, 20), 1);
-	udelay(1000);
-
-	/* Enable epdc signal pin */
-	epdc_enable_pins();
-
-	/* Set PMIC Wakeup to high - enable Display power */
-	gpio_set_value(IMX_GPIO_NR(3, 20), 1);
-
-	/* Wait for PWRGOOD == 1 */
-	while (1) {
-		reg = readl(&gpio_regs->gpio_psr);
-		if (!(reg & (1 << 21)))
-			break;
-
-		udelay(100);
-	}
-
-	/* Enable VCOM */
-	gpio_set_value(IMX_GPIO_NR(3, 17), 1);
-
-	udelay(500);
-}
-
-void epdc_power_off(void)
-{
-	/* Set PMIC Wakeup to low - disable Display power */
-	gpio_set_value(IMX_GPIO_NR(3, 20), 0);
-
-	/* Disable VCOM */
-	gpio_set_value(IMX_GPIO_NR(3, 17), 0);
-
-	epdc_disable_pins();
-
-	/* Set EPD_PWR_CTL0 to low - disable EINK_VDD (3.15) */
-	gpio_set_value(IMX_GPIO_NR(2, 20), 0);
-}
-#endif
-
-int mx6_rgmii_rework(struct phy_device *phydev)
-{
-	unsigned short val;
-
-	/* To enable AR8031 ouput a 125MHz clk from CLK_25M */
-	phy_write(phydev, MDIO_DEVAD_NONE, 0xd, 0x7);
-	phy_write(phydev, MDIO_DEVAD_NONE, 0xe, 0x8016);
-	phy_write(phydev, MDIO_DEVAD_NONE, 0xd, 0x4007);
-
-	val = phy_read(phydev, MDIO_DEVAD_NONE, 0xe);
-	val &= 0xffe3;
-	val |= 0x18;
-	phy_write(phydev, MDIO_DEVAD_NONE, 0xe, val);
-
-	/* introduce tx clock delay */
-	phy_write(phydev, MDIO_DEVAD_NONE, 0x1d, 0x5);
-	val = phy_read(phydev, MDIO_DEVAD_NONE, 0x1e);
-	val |= 0x0100;
-	phy_write(phydev, MDIO_DEVAD_NONE, 0x1e, val);
-
-	return 0;
-}
-
-int board_phy_config(struct phy_device *phydev)
-{
-	mx6_rgmii_rework(phydev);
-
-	if (phydev->drv->config)
-		phydev->drv->config(phydev);
-
-	return 0;
-}
-
 #if defined(CONFIG_VIDEO_IPUV3)
 static void disable_lvds(struct display_info_t const *dev)
 {
@@ -675,6 +427,7 @@ static void enable_lvds(struct display_info_t const *dev)
 	writel(reg, &iomux->gpr[2]);
 }
 
+// ALTANEOS MODIFY
 struct display_info_t const displays[] = {{
 	.bus	= -1,
 	.addr	= 0,
@@ -738,6 +491,7 @@ struct display_info_t const displays[] = {{
 } } };
 size_t display_count = ARRAY_SIZE(displays);
 
+// ALTANEOS CHECK
 static void setup_display(void)
 {
 	struct mxc_ccm_reg *mxc_ccm = (struct mxc_ccm_reg *)CCM_BASE_ADDR;
@@ -803,6 +557,7 @@ int overwrite_console(void)
 	return 1;
 }
 
+// ALTANEOS : KEEP BECAUSE VERY IMPORTANT
 static void setup_fec(void)
 {
 	if (is_mx6dqp()) {
@@ -828,11 +583,13 @@ int board_eth_init(bd_t *bis)
 #define USB_OTHERREGS_OFFSET	0x800
 #define UCTRL_PWR_POL		(1 << 9)
 
+// ALTANEOS: CHECK (OTG ID NOT USED)
 static iomux_v3_cfg_t const usb_otg_pads[] = {
 	MX6_PAD_EIM_D22__USB_OTG_PWR | MUX_PAD_CTRL(NO_PAD_CTRL),
 	MX6_PAD_ENET_RX_ER__USB_OTG_ID | MUX_PAD_CTRL(OTG_ID_PAD_CTRL),
 };
 
+// ALTANEOS: USB OVERCURRENT ???
 static iomux_v3_cfg_t const usb_hc1_pads[] = {
 	MX6_PAD_ENET_TXD1__GPIO1_IO29 | MUX_PAD_CTRL(NO_PAD_CTRL),
 };

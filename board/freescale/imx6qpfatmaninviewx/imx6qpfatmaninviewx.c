@@ -62,6 +62,14 @@ DECLARE_GLOBAL_DATA_PTR;
 #define ENET_PAD_CTRL  (PAD_CTL_PUS_100K_UP | PAD_CTL_PUE |     \
 	PAD_CTL_SPEED_HIGH   |                                  \
 	PAD_CTL_DSE_48ohm   | PAD_CTL_SRE_FAST)	
+	
+#define LCD_PAD_CTRL    (PAD_CTL_HYS | PAD_CTL_PUS_100K_UP | PAD_CTL_PUE | \
+	PAD_CTL_PKE | PAD_CTL_SPEED_MED | PAD_CTL_DSE_40ohm)
+
+#define MDIO_PAD_CTRL  (PAD_CTL_PUS_100K_UP | PAD_CTL_PUE |     \
+	PAD_CTL_DSE_48ohm   | PAD_CTL_SRE_FAST | PAD_CTL_ODE)
+
+#define ENET_CLK_PAD_CTRL  (PAD_CTL_DSE_40ohm   | PAD_CTL_SRE_FAST)
 
 #define SPI_PAD_CTRL (PAD_CTL_HYS |				\
 	PAD_CTL_SPEED_MED |		\
@@ -531,7 +539,7 @@ static void setup_iomux_fec(void)
 
 int board_eth_init(bd_t *bis)
 {
-	setup_iomux_fec(CONFIG_FEC_ENET_DEV);
+	setup_iomux_fec();
 
 	return fecmxc_initialize_multi(bis, CONFIG_FEC_ENET_DEV,
 				       CONFIG_FEC_MXC_PHYADDR, IMX_FEC_BASE);
@@ -539,9 +547,9 @@ int board_eth_init(bd_t *bis)
 
 static void fec_reset(void)
 {
-	gpio_direction_output(ENET1_nRST, 0);
+	gpio_direction_output(ENET_nRST, 0);
 	udelay(500);
-	gpio_direction_output(ENET1_nRST, 1);
+	gpio_direction_output(ENET_nRST, 1);
 }
 
 // ALTANEOS : KEEP BECAUSE VERY IMPORTANT
@@ -557,7 +565,7 @@ static void fec_reset(void)
 		    printf("Error fec anatop clock settings!\n");
 	}
 } */
-static int setup_fec(0)
+static int setup_fec(void)
 {
 	struct iomuxc *const iomuxc_regs = (struct iomuxc *)IOMUXC_BASE_ADDR;
 	int ret;
@@ -718,17 +726,17 @@ int setup_led(void)
 	imx_iomux_v3_setup_multiple_pads(
 		leds_pads, ARRAY_SIZE(leds_pads));
 
-	gpio_direction_output(LED_GREEN_GPIO, 1);
-	gpio_direction_output(LED_YELLOW_GPIO, 1);
-	gpio_direction_output(LED_RED_GPIO, 1);
+	gpio_direction_output(LED_PWM1_GPIO, 1);
+	gpio_direction_output(LED_PWM2_GPIO, 1);
+	gpio_direction_output(LED_PWM3_GPIO, 1);
 	gpio_direction_output(LED_DEBUG_GPIO, 1);
 	gpio_direction_output(LED_BUZZER_GPIO, 1);
 	mdelay(500);
 	gpio_direction_output(LED_BUZZER_GPIO, 0);
 	mdelay(1500);
-	gpio_direction_output(LED_GREEN_GPIO, 0);
-	gpio_direction_output(LED_YELLOW_GPIO, 0);
-	gpio_direction_output(LED_RED_GPIO, 0);
+	gpio_direction_output(LED_PWM1_GPIO, 0);
+	gpio_direction_output(LED_PWM2_GPIO, 0);
+	gpio_direction_output(LED_PWM3_GPIO, 0);
 	gpio_direction_output(LED_DEBUG_GPIO, 0);
 	/* Testing ... */
 	mdelay(500);
@@ -960,7 +968,7 @@ int board_init(void)
 #endif
 
 #ifdef	CONFIG_FEC_MXC
-	setup_fec(CONFIG_FEC_ENET_DEV);
+	setup_fec();
 #endif
 
 #ifdef CONFIG_CMD_SATA

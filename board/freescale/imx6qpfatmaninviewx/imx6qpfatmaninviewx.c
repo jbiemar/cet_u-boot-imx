@@ -570,7 +570,7 @@ static int setup_fec(void)
 	struct iomuxc *const iomuxc_regs = (struct iomuxc *)IOMUXC_BASE_ADDR;
 	int ret;
 
-	if (check_module_fused(MX6_MODULE_ENET))
+	if (check_module_fused(MX6_MODULE_ENET1))
 		return -1;
 
 		/*
@@ -581,7 +581,7 @@ static int setup_fec(void)
 				IOMUX_GPR1_FEC1_CLOCK_MUX1_SEL_MASK);
 
 
-	ret = enable_fec_anatop_clock(fec_id, ENET_50MHZ);
+	ret = enable_fec_anatop_clock(0, ENET_50MHZ);
 	if (ret)
 		return ret;
 

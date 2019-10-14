@@ -649,6 +649,7 @@ void do_enable_parallel_lcd(struct display_info_t const *dev)
 }
 
 struct display_info_t const displays[] = {
+	{
 	.bus	= MX6Q_LCDIF1_BASE_ADDR,
 	.addr	= 0,
 	.pixfmt	= IPU_PIX_FMT_RGB666,
@@ -668,7 +669,8 @@ struct display_info_t const displays[] = {
 		.sync           = 0,
 		.vmode          = FB_VMODE_NONINTERLACED
 		}
-		} ;
+	} 
+};
 size_t display_count = ARRAY_SIZE(displays);
 
 #endif

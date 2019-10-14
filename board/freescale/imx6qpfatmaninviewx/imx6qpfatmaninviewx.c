@@ -537,13 +537,13 @@ static void setup_iomux_fec(void)
 						ARRAY_SIZE(fec1_pads));
 }
 
-int board_eth_init(bd_t *bis)
+/* int board_eth_init(bd_t *bis)
 {
 	setup_iomux_fec();
 
 	return fecmxc_initialize_multi(bis, CONFIG_FEC_ENET_DEV,
 				       CONFIG_FEC_MXC_PHYADDR, IMX_FEC_BASE);
-}
+} */
 
 static void fec_reset(void)
 {

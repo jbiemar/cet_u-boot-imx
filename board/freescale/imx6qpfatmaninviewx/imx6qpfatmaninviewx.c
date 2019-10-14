@@ -506,6 +506,7 @@ int board_spi_cs_gpio(unsigned bus, unsigned cs)
 }
 #endif
 
+// ALTANEOS CHANGE
 static iomux_v3_cfg_t const fec1_pads[] = {
 	MX6_PAD_ENET_MDIO__ENET_MDIO | MUX_PAD_CTRL(MDIO_PAD_CTRL),
 	MX6_PAD_ENET_MDC__ENET_MDC | MUX_PAD_CTRL(ENET_PAD_CTRL),
@@ -531,11 +532,11 @@ static void setup_iomux_fec_rst(void)
 						ARRAY_SIZE(fec_rst_pads));
 }
 
-static void setup_iomux_fec(void)
+/* static void setup_iomux_fec(void)
 {
 	imx_iomux_v3_setup_multiple_pads(fec1_pads,
 						ARRAY_SIZE(fec1_pads));
-}
+} */
 
 /* int board_eth_init(bd_t *bis)
 {
@@ -823,12 +824,10 @@ int setup_dio(void)
 #define USB_OTHERREGS_OFFSET	0x800
 #define UCTRL_PWR_POL		(1 << 9)
 
-// ALTANEOS: CHECK (OTG ID NOT USED)
 static iomux_v3_cfg_t const usb_otg_pads[] = {
 	MX6_PAD_EIM_D22__USB_OTG_PWR | MUX_PAD_CTRL(NO_PAD_CTRL),
 };
 
-// ALTANEOS: USB OVERCURRENT ???
 static iomux_v3_cfg_t const usb_hc1_pads[] = {
 	MX6_PAD_EIM_D21__USB_OTG_OC | MUX_PAD_CTRL(NO_PAD_CTRL),
 };
@@ -1024,8 +1023,6 @@ int board_late_init(void)
 #ifdef CONFIG_ENV_IS_IN_MMC
 	board_late_mmc_env_init();
 #endif
-	
-	// ALTANEOS WATCHDOG
 	
 	// ALTANEOS SPLASH
 

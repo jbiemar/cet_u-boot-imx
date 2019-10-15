@@ -32,7 +32,7 @@
 
 #include "imx6qpfatmaninviewx_common.h"
 
-#define CONFIG_SYS_FSL_USDHC_NUM	3
+#define CONFIG_SYS_FSL_USDHC_NUM	2
 #define CONFIG_SYS_MMC_ENV_DEV		1	/* SDHC3 */
 #define CONFIG_SYS_MMC_ENV_PART                0       /* user partition */
 
@@ -41,7 +41,7 @@
 #endif
 
 
-#define CONFIG_VIDEO_MXS
+//#define CONFIG_VIDEO_MXS
 
 
 /*

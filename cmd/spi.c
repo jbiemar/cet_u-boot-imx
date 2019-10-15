@@ -160,6 +160,39 @@ int do_spi (cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 	return 0;
 }
 
+int do_start_switch (cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
+{
+	char  *cp = 0;
+	uchar tmp;
+	int   j;
+
+	/*
+	 * We use the last specified parameters, unless new ones are
+	 * entered.
+	 */
+
+	mode = CONFIG_DEFAULT_SPI_MODE;
+	bus = 1;
+	cs = 0;
+	bitlen = 24;
+	memcpy(dout, 0x030000, 24);
+
+	if (do_spi_xfer(bus, cs))
+		return 1;
+	printf("Read Family ID : %02x (expected 0x95)", din);
+	
+	memcpy(dout, 0x030100, 24);
+	if (do_spi_xfer(bus, cs))
+		return 1;
+	printf("Chip ID1 : %02x", din);
+	
+	memcpy(dout, 0x020101, 24);
+	if (do_spi_xfer(bus, cs))
+		return 1;
+	
+	return 0;
+}
+
 /***************************************************/
 
 U_BOOT_CMD(
@@ -172,3 +205,10 @@ U_BOOT_CMD(
 	"<bit_len> - Number of bits to send (base 10)\n"
 	"<dout>    - Hexadecimal string that gets sent"
 );
+
+U_BOOT_CMD(
+	start_switch,	0,	1,	do_start_switch,
+	"Start ethernet switch",
+	"Start ethernet switch"
+);
+

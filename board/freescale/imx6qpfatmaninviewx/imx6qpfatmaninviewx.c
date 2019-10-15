@@ -923,28 +923,25 @@ int misc_init_r(void)
 	if (!getenv("ethaddr"))
 		printf("MAC address not set\n");
 	
-	// ALTANEOS DELETE
 	/* Inview X has a 2nd EEPROM */
-/* 	if (strcmp(getenv("touch"), "big") == 0) {
-		if (i2c_read(EEPROM_MAC_DEVADDR1, EEPROM_MAC_REG_MAC, 1, buf, 6) == 0) {
-			sprintf(str, "%02X:%02X:%02X:%02X:%02X:%02X",
-				buf[0], buf[1], buf[2], buf[3], buf[4], buf[5]);
-			// Check if MAC address is valid - Must match the at24mac prefix
-			if (strstr(str, "FC:C2:3D") != str)
-				printf("Error - Bad 2nd MAC address (%s)\n", str);
-			else {
-				printf("Use 2nd MAC address from EEPROM (%s)\n", str);
-				setenv("eth1addr", str);
-			}
-		} else {
-			printf("Warning - Unable to read MAC from I2C device %02X @%04X\n",
-				EEPROM_MAC_DEVADDR1,
-				EEPROM_MAC_REG_MAC);
+	if (i2c_read(EEPROM_MAC_DEVADDR1, EEPROM_MAC_REG_MAC, 1, buf, 6) == 0) {
+		sprintf(str, "%02X:%02X:%02X:%02X:%02X:%02X",
+			buf[0], buf[1], buf[2], buf[3], buf[4], buf[5]);
+		// Check if MAC address is valid - Must match the at24mac prefix
+		if (strstr(str, "FC:C2:3D") != str)
+			printf("Error - Bad 2nd MAC address (%s)\n", str);
+		else {
+			printf("Use 2nd MAC address from EEPROM (%s)\n", str);
+			setenv("eth1addr", str);
 		}
+	} else {
+		printf("Warning - Unable to read MAC from I2C device %02X @%04X\n",
+			EEPROM_MAC_DEVADDR1,
+			EEPROM_MAC_REG_MAC);
 	}
 
 	if (!getenv("eth1addr"))
-		printf("2nd MAC address not set\n"); */
+		printf("2nd MAC address not set\n");
 
 	return 0;
 }

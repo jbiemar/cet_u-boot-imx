@@ -41,7 +41,7 @@
 #endif
 
 
-//#define CONFIG_VIDEO_MXS
+/* #define CONFIG_VIDEO_MXS */
 
 
 /*

@@ -640,19 +640,19 @@ static iomux_v3_cfg_t const lcd_pads[] = {
 	MX6_PAD_SD1_DAT3__PWM1_OUT | MUX_PAD_CTRL(NO_PAD_CTRL),
 };
 
-
+#define DISP0_PWR_EN IMX_GPIO_NR(4, 17)
 void do_enable_parallel_lcd(struct display_info_t const *dev)
 {
-	enable_lcdif_clock(dev->bus);
-
 	imx_iomux_v3_setup_multiple_pads(lcd_pads, ARRAY_SIZE(lcd_pads));
+	
+	gpio_direction_output(DISP0_PWR_EN, 1);
 }
 
 struct display_info_t const displays[] = {
 	{
 	.bus	= 0,
 	.addr	= 0,
-	.pixfmt	= IPU_PIX_FMT_RGB666,
+	.pixfmt	= 18,
 	.detect	= NULL,
 	.enable	= do_enable_parallel_lcd,
 	.mode	= {
@@ -925,11 +925,11 @@ int misc_init_r(void)
 	
 	// ALTANEOS DELETE
 	/* Inview X has a 2nd EEPROM */
-	if (strcmp(getenv("touch"), "big") == 0) {
+/* 	if (strcmp(getenv("touch"), "big") == 0) {
 		if (i2c_read(EEPROM_MAC_DEVADDR1, EEPROM_MAC_REG_MAC, 1, buf, 6) == 0) {
 			sprintf(str, "%02X:%02X:%02X:%02X:%02X:%02X",
 				buf[0], buf[1], buf[2], buf[3], buf[4], buf[5]);
-			/* Check if MAC address is valid - Must match the at24mac prefix*/
+			// Check if MAC address is valid - Must match the at24mac prefix
 			if (strstr(str, "FC:C2:3D") != str)
 				printf("Error - Bad 2nd MAC address (%s)\n", str);
 			else {
@@ -944,7 +944,7 @@ int misc_init_r(void)
 	}
 
 	if (!getenv("eth1addr"))
-		printf("2nd MAC address not set\n");
+		printf("2nd MAC address not set\n"); */
 
 	return 0;
 }

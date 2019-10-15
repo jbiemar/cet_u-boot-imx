@@ -506,7 +506,7 @@ int board_spi_cs_gpio(unsigned bus, unsigned cs)
 }
 #endif
 
-// ALTANEOS CHANGE
+// ALTANEOS VERIFY
 static iomux_v3_cfg_t const fec1_pads[] = {
 	MX6_PAD_ENET_MDIO__ENET_MDIO | MUX_PAD_CTRL(MDIO_PAD_CTRL),
 	MX6_PAD_ENET_MDC__ENET_MDC | MUX_PAD_CTRL(ENET_PAD_CTRL),
@@ -820,7 +820,31 @@ int setup_dio(void)
 	return 0;
 }
 
+int setup_splash(void)
+{
+	int ret = 0;
+	char *strldaddr = NULL;
+	ulong ldaddr = 0;
 
+	char cmdarg[64];
+
+	printf("%s\n", __FUNCTION__);
+
+	memset(strldaddr, 0, sizeof(strldaddr));
+	if (!getenv("splashaddr"))
+		return 0;
+	strldaddr = getenv("splashaddr");
+	ldaddr = getenv_hex("splashaddr", 0);
+	printf("ldaddr = %s (0x%X)\n", strldaddr, (unsigned int) ldaddr);
+	if (strldaddr == NULL)
+		return 0;
+
+	snprintf(cmdarg, sizeof(cmdarg), "load mmc 1:5 %s /data/default/splash-normal.bmp", strldaddr);
+	run_command(cmdarg, 0);
+	ret = bmp_display(ldaddr, 0, 0);
+
+	return ret;
+}
 
 #ifdef CONFIG_USB_EHCI_MX6
 #define USB_OTHERREGS_OFFSET	0x800
@@ -987,14 +1011,9 @@ int board_init(void)
 	return 0;
 }
 
-// ALTANEOS CHECK
 #ifdef CONFIG_CMD_BMODE
 static const struct boot_mode board_boot_modes[] = {
-	/* 4 bit bus width */
-	{"sd2",	 MAKE_CFGVAL(0x40, 0x28, 0x00, 0x00)},
-	{"sd3",	 MAKE_CFGVAL(0x40, 0x30, 0x00, 0x00)},
-	/* 8 bit bus width */
-	{"emmc", MAKE_CFGVAL(0x60, 0x58, 0x00, 0x00)},
+	{"emmc", MAKE_CFGVAL(0x62, 0x58, 0x00, 0x00)},
 	{NULL,	 0},
 };
 #endif
@@ -1023,7 +1042,7 @@ int board_late_init(void)
 	board_late_mmc_env_init();
 #endif
 	
-	// ALTANEOS SPLASH
+	setup_splash();
 
 	return 0;
 }

@@ -814,7 +814,7 @@ int setup_splash(void)
 
 	snprintf(cmdarg, sizeof(cmdarg), "load mmc 1:5 %s /data/default/splash-normal.bmp", strldaddr);
 	run_command(cmdarg, 0);
-	ret = bmp_display(ldaddr, 0, 0);
+	/* ret = bmp_display(ldaddr, 0, 0); ALTANEOS CHECK */
 
 	return ret;
 }

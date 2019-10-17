@@ -109,8 +109,8 @@ static struct i2c_pads_info i2c_pad_info2 = {
 		.gp = IMX_GPIO_NR(4, 13),
 	},
 };
-#endif
 
+#ifdef CONFIG_POWER
 int power_init_board(void)
 {
 	struct pmic *pfuze;
@@ -304,6 +304,8 @@ void ldo_mode_set(int ldo_bypass)
 	}
 }
 #endif
+#endif
+#endif
 
 int dram_init(void)
 {
@@ -390,20 +392,7 @@ int mmc_map_to_kernel_blk(int devno)
 
 int board_mmc_getcd(struct mmc *mmc)
 {
-/*  	struct fsl_esdhc_cfg *cfg = (struct fsl_esdhc_cfg *)mmc->priv;
-	int ret = 0;
-
-	switch (cfg->esdhc_base) {
-	case USDHC2_BASE_ADDR:
-		ret = !gpio_get_value(USDHC2_CD_GPIO);
-		break;
-	case USDHC3_BASE_ADDR:
-		ret = !gpio_get_value(USDHC3_CD_GPIO);
-		break;
-	case USDHC4_BASE_ADDR:
-		ret = 1; 
-		break;
-	}  */
+/* Always true, no CD */
 	return 1;
 }
 
@@ -479,8 +468,13 @@ int board_spi_cs_gpio(unsigned bus, unsigned cs)
 }
 #endif
 
-// ALTANEOS VERIFY
-static iomux_v3_cfg_t const fec1_pads[] = {
+
+// ALTANEOS ETHERNET -------------------------------------------
+
+
+// ALTANEOS PAD DECLARATION
+
+static iomux_v3_cfg_t const enet_pads[] = {
 	MX6_PAD_ENET_MDIO__ENET_MDIO | MUX_PAD_CTRL(MDIO_PAD_CTRL),
 	MX6_PAD_ENET_MDC__ENET_MDC | MUX_PAD_CTRL(ENET_PAD_CTRL),
 	MX6_PAD_ENET_TXD0__ENET_TX_DATA0 | MUX_PAD_CTRL(ENET_PAD_CTRL),
@@ -497,27 +491,13 @@ static iomux_v3_cfg_t const fec_rst_pads[] = {
 	MX6_PAD_NANDF_CS3__GPIO6_IO16 | MUX_PAD_CTRL(ENET_PAD_CTRL),
 };
 
-#define ENET_nRST IMX_GPIO_NR(6, 16)
-
 static void setup_iomux_fec_rst(void)
 {
 	imx_iomux_v3_setup_multiple_pads(fec_rst_pads,
 						ARRAY_SIZE(fec_rst_pads));
 }
 
-/* static void setup_iomux_fec(void)
-{
-	imx_iomux_v3_setup_multiple_pads(fec1_pads,
-						ARRAY_SIZE(fec1_pads));
-} */
-
-/* int board_eth_init(bd_t *bis)
-{
-	setup_iomux_fec();
-
-	return fecmxc_initialize_multi(bis, CONFIG_FEC_ENET_DEV,
-				       CONFIG_FEC_MXC_PHYADDR, IMX_FEC_BASE);
-} */
+#define ENET_nRST IMX_GPIO_NR(6, 16)
 
 static void fec_reset(void)
 {
@@ -526,54 +506,48 @@ static void fec_reset(void)
 	gpio_direction_output(ENET_nRST, 1);
 }
 
-// ALTANEOS : KEEP BECAUSE VERY IMPORTANT
-/* static void setup_fec(void)
+static void setup_iomux_enet(void)
 {
+	imx_iomux_v3_setup_multiple_pads(enet_pads, ARRAY_SIZE(enet_pads));
+	
+	/* Switch reset */
+	fec_reset();
+}
+
+// ALTANEOS : KEEP BECAUSE VERY IMPORTANT
+static void setup_fec(void)
+{
+	imx_iomux_set_gpr_register(1, 21, 1, 1);
+	
+	/* Ref Manual IMX6DQPRM 36.4.522 Select Input Register */
+	u32 reg = 0x1;
+	writel(reg, 0x20e083C);
+	
 	if (is_mx6dqp()) {
 		int ret;
 
+		
+
 		// select ENET MAC0 TX clock from PLL  //
-		imx_iomux_set_gpr_register(5, 9, 1, 1);
+		imx_iomux_set_gpr_register(5, 9, 1, 1);		
 		ret = enable_fec_anatop_clock(0, ENET_125MHZ);
 		if (ret)
 		    printf("Error fec anatop clock settings!\n");
 	}
-} */
-static int setup_fec(void)
-{
-	struct iomuxc *const iomuxc_regs = (struct iomuxc *)IOMUXC_BASE_ADDR;
-	int ret;
-
-	if (check_module_fused(MX6_MODULE_ENET1))
-		return -1;
-
-		/*
-		 * Use 50M anatop loopback REF_CLK1 for ENET1,
-		 * clear gpr1[13], set gpr1[17].
-		 */
-	clrsetbits_le32(&iomuxc_regs->gpr[1], IOMUX_GPR1_FEC1_MASK,
-				IOMUX_GPR1_FEC1_CLOCK_MUX1_SEL_MASK);
-
-
-	ret = enable_fec_anatop_clock(0, ENET_50MHZ);
-	if (ret)
-		return ret;
-
-	enable_enet_clk(1);
-
-	return 0;
 }
 
-//ALTANEOS ADD : NO PHY
-int board_phy_config(struct phy_device *phydev)
+int board_eth_init(bd_t *bis)
 {
-	phy_write(phydev, MDIO_DEVAD_NONE, 0x1f, 0x8190);
+	setup_iomux_enet();
 
-	if (phydev->drv->config)
-		phydev->drv->config(phydev);
-
-	return 0;
+	return cpu_eth_init(bis);
 }
+
+// END ALTANEOS ETHERNET -------------------------------------------
+
+
+
+// ALTANEOS LCD -------------------------------------------
 
 #ifdef CONFIG_VIDEO_MXS
 static iomux_v3_cfg_t const lcd_pads[] = {
@@ -647,6 +621,8 @@ struct display_info_t const displays[] = {
 size_t display_count = ARRAY_SIZE(displays);
 
 #endif
+
+// END ALTANEOS LCD -------------------------------------------
 
 static iomux_v3_cfg_t const touch_pads[] = {
 	/* TS_IRQ || ALTANEOS nInt ? */

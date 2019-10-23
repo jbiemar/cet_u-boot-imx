@@ -956,17 +956,8 @@ int board_init(void)
 	setup_usb();
 #endif
 
-#ifdef	CONFIG_FEC_MXC
-	misc_init_r();
-	setup_fec();
-#endif
-
 #ifdef CONFIG_CMD_SATA
 	setup_sata();
-#endif
-
-#ifdef CONFIG_FEC_MXC
-	setup_fec();
 #endif
 
 #if defined(CONFIG_MXC_SPI) || defined(CONFIG_FSL_QSPI)
@@ -975,6 +966,11 @@ int board_init(void)
 
 	setup_led();
 	setup_ninja();
+	
+#ifdef	CONFIG_FEC_MXC
+	misc_init_r();
+	setup_fec();
+#endif
 	
 	printf("%s Finish success\n", __FUNCTION__);
 	return 0;

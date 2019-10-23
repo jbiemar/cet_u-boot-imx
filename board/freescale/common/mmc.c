@@ -40,20 +40,20 @@ void board_late_mmc_env_init(void)
 	
 	if (!check_mmc_autodetect())
 	{
-		printf("Check MMC autodetect failed");
+		printf("Check MMC autodetect failed\n");
 		return;
 	}
-	printf("Check MMC autodetect success");
+	printf("Check MMC autodetect success\n");
 	setenv_ulong("mmcdev", dev_no);
 
 	/* Set mmcblk env */
-	printf("%s : Set mmcblk env", __FUNCTION__);
+	printf("%s : Set mmcblk env\n", __FUNCTION__);
 	sprintf(mmcblk, "/dev/mmcblk%dp2 rootwait rw",
 		mmc_map_to_kernel_blk(dev_no));
 	setenv("mmcroot", mmcblk);
 
 	sprintf(cmd, "mmc dev %d", dev_no);
-	printf("%s : run_command : %s", __FUNCTION__, cmd);
+	printf("%s : run_command : %s\n", __FUNCTION__, cmd);
 	run_command(cmd, 0);
-	printf("%s : run_command finished", __FUNCTION__);
+	printf("%s : run_command finished\n", __FUNCTION__);
 }

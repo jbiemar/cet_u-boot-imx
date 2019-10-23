@@ -12,7 +12,9 @@
 static int check_mmc_autodetect(void)
 {
 	char *autodetect_str = getenv("mmcautodetect");
-
+	
+	printf("%s\n", __FUNCTION__);
+	
 	if ((autodetect_str != NULL) &&
 		(strcmp(autodetect_str, "yes") == 0)) {
 		return 1;
@@ -29,10 +31,13 @@ __weak int mmc_map_to_kernel_blk(int dev_no)
 
 void board_late_mmc_env_init(void)
 {
+	
 	char cmd[32];
 	char mmcblk[32];
 	u32 dev_no = mmc_get_env_dev();
-
+	
+	printf("%s\n", __FUNCTION__);
+	
 	if (!check_mmc_autodetect())
 		return;
 

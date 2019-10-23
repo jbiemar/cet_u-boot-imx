@@ -387,8 +387,8 @@ struct fsl_esdhc_cfg usdhc_cfg[2] = {
 	{USDHC4_BASE_ADDR, 0, 8},
 };
 
-#define USDHC3_PWR_GPIO	IMX_GPIO_NR(7, 8)
-#define USDHC4_PWR_GPIO	IMX_GPIO_NR(6, 8)
+#define USDHC3_nRESET_GPIO	IMX_GPIO_NR(7, 8)
+#define USDHC4_nRESET_GPIO	IMX_GPIO_NR(6, 8)
 
 int board_mmc_get_env_dev(int devno)
 {
@@ -408,6 +408,7 @@ int board_mmc_getcd(struct mmc *mmc)
 
 int board_mmc_init(bd_t *bis)
 {
+	printf("%s\n", __FUNCTION__);
 	int i, ret;
 
 	/*
@@ -422,19 +423,19 @@ int board_mmc_init(bd_t *bis)
 			imx_iomux_v3_setup_multiple_pads(
 				usdhc3_emmc1_pads, ARRAY_SIZE(usdhc3_emmc1_pads));
 
-			gpio_direction_output(USDHC3_PWR_GPIO, 0);
+			gpio_direction_output(USDHC3_nRESET_GPIO, 0);
 			udelay(500);
-			gpio_direction_output(USDHC3_PWR_GPIO, 1);
-			usdhc_cfg[0].sdhc_clk = mxc_get_clock(MXC_ESDHC_CLK);
+			gpio_direction_output(USDHC3_nRESET_GPIO, 1);
+			usdhc_cfg[0].sdhc_clk = mxc_get_clock(MXC_ESDHC3_CLK);
 			break;
 		case 1:
 			imx_iomux_v3_setup_multiple_pads(
 				usdhc4_emmc2_pads, ARRAY_SIZE(usdhc4_emmc2_pads));
 
-			gpio_direction_output(USDHC4_PWR_GPIO, 0);
+			gpio_direction_output(USDHC4_nRESET_GPIO, 0);
 			udelay(500);
-			gpio_direction_output(USDHC4_PWR_GPIO, 1);
-			usdhc_cfg[1].sdhc_clk = mxc_get_clock(MXC_ESDHC2_CLK);
+			gpio_direction_output(USDHC4_nRESET_GPIO, 1);
+			usdhc_cfg[1].sdhc_clk = mxc_get_clock(MXC_ESDHC4_CLK);
 			break;
 		default:
 			printf("Warning: you configured more USDHC controllers (%d) than supported by the board\n", i + 1);
@@ -446,6 +447,7 @@ int board_mmc_init(bd_t *bis)
 				printf("Warning: failed to initialize mmc dev %d\n", i);
 			}
 	}
+	printf("%s Finish Success\n", __FUNCTION__);
 	return 0;
 }
 #endif

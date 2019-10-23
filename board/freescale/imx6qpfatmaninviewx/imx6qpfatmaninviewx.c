@@ -969,7 +969,7 @@ int board_init(void)
 	setup_ninja();
 	
 #ifdef	CONFIG_FEC_MXC
-	misc_init_r();
+
 	setup_fec();
 #endif
 	
@@ -990,7 +990,7 @@ int board_late_init(void)
 #ifdef CONFIG_CMD_BMODE
 	add_board_boot_modes(board_boot_modes);
 #endif
-
+	misc_init_r();
 #ifdef CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
 	setenv("board_name", "IMX6QPFATMANINVIEWX");
 

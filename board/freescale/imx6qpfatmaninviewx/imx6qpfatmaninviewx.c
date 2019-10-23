@@ -392,14 +392,12 @@ struct fsl_esdhc_cfg usdhc_cfg[2] = {
 
 int board_mmc_get_env_dev(int devno)
 {
-	printf("%s : devno - 3 = %i\n", __FUNCTION__, devno - 3);
-	return devno - 3;
+	return devno - 2;
 }
 
 int mmc_map_to_kernel_blk(int devno)
 {
-	printf("%s : devno + 3 = %i\n", __FUNCTION__, devno + 3);
-	return devno + 3;
+	return devno + 2;
 }
 
 int board_mmc_getcd(struct mmc *mmc)

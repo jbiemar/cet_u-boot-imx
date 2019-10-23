@@ -117,17 +117,27 @@ int power_init_board(void)
 	unsigned int reg;
 	int ret;
 
+	printf("%s\n", __FUNCTION__);
+
 	pfuze = pfuze_common_init(I2C_PMIC);
+	printf("pfuze_common_init Finish\n");
 	if (!pfuze)
 		return -ENODEV;
-
+	printf("pfuze_common_init Success\n");
+	
 	if (is_mx6dqp())
+	{
+		printf("pfuze_mode_init\n");
 		ret = pfuze_mode_init(pfuze, APS_APS);
+		printf("pfuze_mode_init Finish\n");
+	}
 	else
 		ret = pfuze_mode_init(pfuze, APS_PFM);
 
 	if (ret < 0)
 		return ret;
+	printf("pfuze_mode_init Success\n");
+	
 	/* VGEN3 and VGEN5 corrected on i.mx6qp board */
 	if (!is_mx6dqp()) {
 		/* Increase VGEN3 from 2.5 to 2.8V */
@@ -192,7 +202,7 @@ int power_init_board(void)
 		reg |= 0x40;
 		pmic_reg_write(pfuze, PFUZE100_SW1CCONF, reg);
 	}
-
+	printf("%s Finish success\n", __FUNCTION__);
 	return 0;
 }
 
@@ -859,8 +869,9 @@ int board_ehci_power(int port, int on)
 
 int board_early_init_f(void)
 {
+	printf("%s\n", __FUNCTION__);
 	setup_iomux_uart();
-
+	printf("%s Finish success\n", __FUNCTION__);
 	return 0;
 }
 
@@ -873,6 +884,7 @@ int board_early_init_f(void)
 
 int misc_init_r(void)
 {
+	printf("%s\n", __FUNCTION__);
 	uchar buf[6];
 	char str[18];
 
@@ -916,11 +928,13 @@ int misc_init_r(void)
 	if (!getenv("eth1addr"))
 		printf("2nd MAC address not set\n");
 
+	printf("%s Finish success\n", __FUNCTION__);
 	return 0;
 }
 
 int board_init(void)
 {
+	printf("%s\n", __FUNCTION__);
 	/* address of boot parameters */
 	gd->bd->bi_boot_params = PHYS_SDRAM + 0x100;
 
@@ -929,8 +943,10 @@ int board_init(void)
 	setup_dio();
 	
 #ifdef CONFIG_SYS_I2C_MXC
-	setup_i2c(0, CONFIG_SYS_I2C_SPEED, 0x08, &i2c_pad_info1);
+	printf("Entering setup_i2c\n");
+	setup_i2c(0, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info1);
 	setup_i2c(1, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info2);
+	printf("Finish setup_i2c\n");
 	setup_touch();
 #endif
 
@@ -957,6 +973,7 @@ int board_init(void)
 	setup_led();
 	setup_ninja();
 	
+	printf("%s Finish success\n", __FUNCTION__);
 	return 0;
 }
 
@@ -969,7 +986,7 @@ static const struct boot_mode board_boot_modes[] = {
 
 int board_late_init(void)
 {
-	printf("board_late_init\n");
+	printf("%s\n", __FUNCTION__);
 #ifdef CONFIG_CMD_BMODE
 	add_board_boot_modes(board_boot_modes);
 #endif
@@ -992,7 +1009,7 @@ int board_late_init(void)
 #endif
 	
 	setup_splash();
-
+	printf("%s Finish success\n", __FUNCTION__);
 	return 0;
 }
 

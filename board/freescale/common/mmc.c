@@ -13,7 +13,7 @@ static int check_mmc_autodetect(void)
 {
 	char *autodetect_str = getenv("mmcautodetect");
 	
-	printf("%s\n", __FUNCTION__);
+	printf("%s : %s\n", __FUNCTION__, autodetect_str);
 	
 	if ((autodetect_str != NULL) &&
 		(strcmp(autodetect_str, "yes") == 0)) {
@@ -39,15 +39,21 @@ void board_late_mmc_env_init(void)
 	printf("%s\n", __FUNCTION__);
 	
 	if (!check_mmc_autodetect())
+	{
+		printf("Check MMC autodetect failed");
 		return;
-
+	}
+	printf("Check MMC autodetect success");
 	setenv_ulong("mmcdev", dev_no);
 
 	/* Set mmcblk env */
+	printf("%s : Set mmcblk env", __FUNCTION__);
 	sprintf(mmcblk, "/dev/mmcblk%dp2 rootwait rw",
 		mmc_map_to_kernel_blk(dev_no));
 	setenv("mmcroot", mmcblk);
 
 	sprintf(cmd, "mmc dev %d", dev_no);
+	printf("%s : run_command : %s", __FUNCTION__, cmd);
 	run_command(cmd, 0);
+	printf("%s : run_command finished", __FUNCTION__);
 }

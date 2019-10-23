@@ -383,8 +383,8 @@ static iomux_v3_cfg_t const usdhc4_emmc2_pads[] = {
 
 #ifdef CONFIG_FSL_ESDHC
 struct fsl_esdhc_cfg usdhc_cfg[2] = {
-	{USDHC3_BASE_ADDR, 0, 8},
-	{USDHC4_BASE_ADDR, 0, 8},
+	{USDHC3_BASE_ADDR},
+	{USDHC4_BASE_ADDR},
 };
 
 #define USDHC3_nRESET_GPIO	IMX_GPIO_NR(7, 8)

@@ -957,6 +957,7 @@ int board_init(void)
 #endif
 
 #ifdef	CONFIG_FEC_MXC
+	misc_init_r();
 	setup_fec();
 #endif
 

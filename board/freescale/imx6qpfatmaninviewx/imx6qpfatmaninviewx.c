@@ -899,7 +899,8 @@ int misc_init_r(void)
 			printf("Error - Bad MAC address (%s)\n", str);
 		else {
 			printf("Use MAC address from EEPROM (%s)\n", str);
-			printf("Result : %i\n",setenv("ethaddr", str));
+			// printf("Result : %i\n",setenv("ethaddr", str));
+			printf("Result : %i\n",setenv("ethaddr", "FC:C2:3D:2C:14:12"));
 		}
 	} else {
 		printf("Warning - Unable to read MAC from I2C device %02X @%04X\n",

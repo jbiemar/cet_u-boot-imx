@@ -32,6 +32,7 @@
 #include <asm/arch/mx6-ddr.h>
 #include <usb.h>
 
+#include <mxc_epdc_fb.h>
 #include <lcd.h>
 #include <command.h>
 #include <fs.h>

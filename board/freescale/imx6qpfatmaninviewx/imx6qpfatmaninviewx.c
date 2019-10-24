@@ -564,7 +564,6 @@ int board_eth_init(bd_t *bis)
 
 // ALTANEOS LCD -------------------------------------------
 
-#ifdef CONFIG_VIDEO_MXS
 
 iomux_v3_cfg_t const di0_pads[] = {
 	MX6_PAD_DI0_DISP_CLK__IPU1_DI0_DISP_CLK,	/* DISP0_CLK */
@@ -642,7 +641,6 @@ struct display_info_t const displays[] = {
 };
 size_t display_count = ARRAY_SIZE(displays);
 
-#endif
 
 // END ALTANEOS LCD -------------------------------------------
 

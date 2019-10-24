@@ -41,8 +41,8 @@
 #endif
 
 
-#define CONFIG_VIDEO_MXS
-#define CONFIG_CMD_BMODE
+/*#define CONFIG_VIDEO_MXS
+#define CONFIG_CMD_BMODE*/
 
 /*
  * imx6 q/dl/solo pcie would be failed to work properly in kernel, if

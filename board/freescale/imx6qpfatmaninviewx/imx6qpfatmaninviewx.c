@@ -803,13 +803,13 @@ int setup_splash(void)
 	if (strldaddr == NULL)
 		return 0;
 
-	snprintf(cmdarg, sizeof(cmdarg), "load mmc 3:2 %s /usr/share/splash_bmp/splash-big.bmp", strldaddr);
+	snprintf(cmdarg, sizeof(cmdarg), "load mmc 1:2 %s /usr/share/splash_bmp/splash-big.bmp", strldaddr);
 	run_command(cmdarg, 0);
 	/*ret = bmp_display(ldaddr, 0, 0);*/
 	#ifdef _LCD_H_
-		printf("-------------ALTANEOS lcd.h defined");
+		printf("-------------ALTANEOS lcd.h defined\n");
 	#else
-		printf("-------------ALTANEOS lcd.h not defined");
+		printf("-------------ALTANEOS lcd.h not defined\n");
 	#endif
 
 	return ret;

@@ -802,8 +802,7 @@ int setup_splash(void)
 
 	snprintf(cmdarg, sizeof(cmdarg), "load mmc 3:2 %s /usr/share/splash_bmp/splash-big.bmp", strldaddr);
 	run_command(cmdarg, 0);
-	/*ret = bmp_display(ldaddr, 0, 0);*/
-	lcd_show_board_info();
+	ret = bmp_display(ldaddr, 0, 0);
 
 	return ret;
 }

@@ -3,7 +3,7 @@ CONFIG_ARCH_MX6=y
 CONFIG_TARGET_IMX6QPFATMANINVIEWX=y
 CONFIG_SYS_EXTRA_OPTIONS="IMX_CONFIG=board/freescale/imx6qpfatmaninviewx/imx6qpfatmaninviewx.cfg,MX6QP"
 CONFIG_CMD_GPIO=y
-CONFIG_SYS_MALLOC_F=y                                                           
-CONFIG_SYS_MALLOC_F_LEN=0x400                                                   
-CONFIG_DM=y                                                                     
+CONFIG_SYS_MALLOC_F=y
+CONFIG_SYS_MALLOC_F_LEN=0x800
+CONFIG_DM=y
 CONFIG_DM_THERMAL=y

@@ -31,11 +31,7 @@
 #include "../common/pfuze.h"
 #include <asm/arch/mx6-ddr.h>
 #include <usb.h>
-	#ifdef _LCD_H_
-		printf("-------------ALTANEOS lcd.h defined");
-	#else
-		printf("-------------ALTANEOS lcd.h not defined");
-	#endif
+
 #include <lcd.h>
 #include <command.h>
 #include <fs.h>

@@ -85,7 +85,7 @@
 	
 #define CONFIG_LCD_ENV_SETTINGS \
 	"video=mxcfb0:dev=lcd,HX8258A,if=RGB666\0" \
-	"mmcargs=setenv bootargs console=${console},${baudrate} video=${video} ${smp} root=${mmcroot}\0" \
+	"mmcargs=setenv bootargs console=${console},${baudrate} video=${video} root=${mmcroot}\0" \
 	
 #ifdef CONFIG_SUPPORT_EMMC_BOOT
 #define EMMC_ENV \
@@ -186,7 +186,7 @@
 		"fi\0" \
 	EMMC_ENV	  \
 	"smp=" CONFIG_SYS_NOSMP "\0"\
-	CONFIG_HDMI_ENV_SETTINGS \
+	CONFIG_LCD_ENV_SETTINGS \
 	"loadbootscript=" \
 		"fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${script};\0" \
 	"bootscript=echo Running bootscript from mmc ...; " \

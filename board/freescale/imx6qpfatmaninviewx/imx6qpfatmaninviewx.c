@@ -565,6 +565,13 @@ int board_eth_init(bd_t *bis)
 // ALTANEOS LCD -------------------------------------------
 
 #ifdef CONFIG_VIDEO_MXS
+
+iomux_v3_cfg_t const di0_pads[] = {
+	MX6_PAD_DI0_DISP_CLK__IPU1_DI0_DISP_CLK,	/* DISP0_CLK */
+	MX6_PAD_DI0_PIN2__IPU1_DI0_PIN02,		/* DISP0_HSYNC */
+	MX6_PAD_DI0_PIN3__IPU1_DI0_PIN03,		/* DISP0_VSYNC */
+};
+
 static iomux_v3_cfg_t const lcd_pads[] = {
 	MX6_PAD_DI0_DISP_CLK__IPU1_DI0_DISP_CLK | MUX_PAD_CTRL(LCD_PAD_CTRL),
 	MX6_PAD_DI0_PIN15__IPU1_DI0_PIN15 | MUX_PAD_CTRL(LCD_PAD_CTRL),	// enable
@@ -607,14 +614,14 @@ void do_enable_parallel_lcd(struct display_info_t const *dev)
 {
 	imx_iomux_v3_setup_multiple_pads(lcd_pads, ARRAY_SIZE(lcd_pads));
 	
-	gpio_direction_output(DISP0_PWR_EN, 1);
+	gpio_direction_output(DISP0_PWR_EN, 0);
 }
 
 struct display_info_t const displays[] = {
 	{
 	.bus	= 0,
 	.addr	= 0,
-	.pixfmt	= 18,
+	.pixfmt	= IPU_PIX_FMT_RGB666,
 	.detect	= NULL,
 	.enable	= do_enable_parallel_lcd,
 	.mode	= {
@@ -645,6 +652,61 @@ static iomux_v3_cfg_t const touch_pads[] = {
 	/* TS_nRST */
 	MX6_PAD_GPIO_18__GPIO7_IO13 | MUX_PAD_CTRL(FASTGPIO_PAD_CTRL),
 };
+
+static void setup_display(void)
+{
+	struct mxc_ccm_reg *mxc_ccm = (struct mxc_ccm_reg *)CCM_BASE_ADDR;
+	struct iomuxc *iomux = (struct iomuxc *)IOMUXC_BASE_ADDR;
+	int reg;
+
+	/* Setup HSYNC, VSYNC, DISP_CLK for debugging purposes */
+	imx_iomux_v3_setup_multiple_pads(di0_pads, ARRAY_SIZE(di0_pads));
+
+	enable_ipu_clock();
+	imx_setup_hdmi();
+
+	/* Turn on LDB0, LDB1, IPU,IPU DI0 clocks */
+	reg = readl(&mxc_ccm->CCGR3);
+	reg |=  MXC_CCM_CCGR3_LDB_DI0_MASK | MXC_CCM_CCGR3_LDB_DI1_MASK;
+	writel(reg, &mxc_ccm->CCGR3);
+
+	/* set LDB0, LDB1 clk select to 011/011 */
+	reg = readl(&mxc_ccm->cs2cdr);
+	reg &= ~(MXC_CCM_CS2CDR_LDB_DI0_CLK_SEL_MASK
+		 | MXC_CCM_CS2CDR_LDB_DI1_CLK_SEL_MASK);
+	reg |= (3 << MXC_CCM_CS2CDR_LDB_DI0_CLK_SEL_OFFSET)
+	      | (3 << MXC_CCM_CS2CDR_LDB_DI1_CLK_SEL_OFFSET);
+	writel(reg, &mxc_ccm->cs2cdr);
+
+	reg = readl(&mxc_ccm->cscmr2);
+	reg |= MXC_CCM_CSCMR2_LDB_DI0_IPU_DIV | MXC_CCM_CSCMR2_LDB_DI1_IPU_DIV;
+	writel(reg, &mxc_ccm->cscmr2);
+
+	reg = readl(&mxc_ccm->chsccdr);
+	reg |= (CHSCCDR_CLK_SEL_LDB_DI0
+		<< MXC_CCM_CHSCCDR_IPU1_DI0_CLK_SEL_OFFSET);
+	reg |= (CHSCCDR_CLK_SEL_LDB_DI0
+		<< MXC_CCM_CHSCCDR_IPU1_DI1_CLK_SEL_OFFSET);
+	writel(reg, &mxc_ccm->chsccdr);
+
+	reg = IOMUXC_GPR2_BGREF_RRMODE_EXTERNAL_RES
+	     | IOMUXC_GPR2_DI1_VS_POLARITY_ACTIVE_LOW
+	     | IOMUXC_GPR2_DI0_VS_POLARITY_ACTIVE_LOW
+	     | IOMUXC_GPR2_BIT_MAPPING_CH1_SPWG
+	     | IOMUXC_GPR2_DATA_WIDTH_CH1_18BIT
+	     | IOMUXC_GPR2_BIT_MAPPING_CH0_SPWG
+	     | IOMUXC_GPR2_DATA_WIDTH_CH0_18BIT
+	     | IOMUXC_GPR2_LVDS_CH0_MODE_DISABLED
+	     | IOMUXC_GPR2_LVDS_CH1_MODE_ENABLED_DI0;
+	writel(reg, &iomux->gpr[2]);
+
+	reg = readl(&iomux->gpr[3]);
+	reg = (reg & ~(IOMUXC_GPR3_LVDS1_MUX_CTL_MASK
+			| IOMUXC_GPR3_HDMI_MUX_CTL_MASK))
+	    | (IOMUXC_GPR3_MUX_SRC_IPU1_DI0
+	       << IOMUXC_GPR3_LVDS1_MUX_CTL_OFFSET);
+	writel(reg, &iomux->gpr[3]);
+}
 
 #define TOUCH_IRQ_GPIO		IMX_GPIO_NR(1, 2)
 #define TOUCH_nRST_GPIO		IMX_GPIO_NR(7, 13)
@@ -877,6 +939,7 @@ int board_early_init_f(void)
 {
 	printf("%s\n", __FUNCTION__);
 	setup_iomux_uart();
+	setup_display();
 	return 0;
 }
 

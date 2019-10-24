@@ -84,7 +84,6 @@
 
 #define CONFIG_TEST_ENV_SETTINGS \
 	"splashaddr=0x97c90000\0" \
-	"mmcargs=setenv bootargs console=${console},${baudrate} ${smp} root=${mmcroot}\0" \
 
 
 /* END ALTANEOS ADD */
@@ -187,6 +186,8 @@
 		"fi\0" \
 	EMMC_ENV	  \
 	"smp=" CONFIG_SYS_NOSMP "\0"\
+	"mmcargs=setenv bootargs console=${console},${baudrate} ${smp} " \
+		"root=${mmcroot}\0" \
 	CONFIG_TEST_ENV_SETTINGS \
 	"loadbootscript=" \
 		"fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${script};\0" \

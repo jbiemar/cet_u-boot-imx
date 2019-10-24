@@ -186,7 +186,7 @@
 		"fi\0" \
 	EMMC_ENV	  \
 	"smp=" CONFIG_SYS_NOSMP "\0"\
-	"mmcargs=setenv bootargs console=${console},${baudrate} ${smp} " \
+	"mmcargs=setenv bootargs console=${console},${baudrate} " \
 		"root=${mmcroot}\0" \
 	CONFIG_TEST_ENV_SETTINGS \
 	"loadbootscript=" \

@@ -855,10 +855,10 @@ int setup_splash(void)
 	printf("%s\n", __FUNCTION__);
 
 	memset(strldaddr, 0, sizeof(strldaddr));
-	if (!getenv("splashaddr"))
+	if (!getenv("loadaddr"))
 		return 0;
-	strldaddr = getenv("splashaddr");
-	ldaddr = getenv_hex("splashaddr", 0);
+	strldaddr = getenv("loadaddr");
+	ldaddr = getenv_hex("loadaddr", 0);
 	printf("ldaddr = %s (0x%X)\n", strldaddr, (unsigned int) ldaddr);
 	if (strldaddr == NULL)
 		return 0;

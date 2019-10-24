@@ -120,23 +120,18 @@ int power_init_board(void)
 	printf("%s\n", __FUNCTION__);
 
 	pfuze = pfuze_common_init(I2C_PMIC);
-	printf("pfuze_common_init Finish\n");
 	if (!pfuze)
 		return -ENODEV;
-	printf("pfuze_common_init Success\n");
 	
 	if (is_mx6dqp())
 	{
-		printf("pfuze_mode_init\n");
 		ret = pfuze_mode_init(pfuze, APS_APS);
-		printf("pfuze_mode_init Finish\n");
 	}
 	else
 		ret = pfuze_mode_init(pfuze, APS_PFM);
 
 	if (ret < 0)
 		return ret;
-	printf("pfuze_mode_init Success\n");
 	
 	/* VGEN3 and VGEN5 corrected on i.mx6qp board */
 	if (!is_mx6dqp()) {
@@ -202,7 +197,6 @@ int power_init_board(void)
 		reg |= 0x40;
 		pmic_reg_write(pfuze, PFUZE100_SW1CCONF, reg);
 	}
-	printf("%s Finish success\n", __FUNCTION__);
 	return 0;
 }
 
@@ -447,7 +441,6 @@ int board_mmc_init(bd_t *bis)
 				printf("Warning: failed to initialize mmc dev %d\n", i);
 			}
 	}
-	printf("%s Finish Success\n", __FUNCTION__);
 	return 0;
 }
 #endif
@@ -465,7 +458,7 @@ static iomux_v3_cfg_t const ecspi1_pads[] = {
 static void setup_spi(void)
 {
 	int i;
-	printf("setup_spi\n");
+	printf("%s\n", __FUNCTION__);
 	imx_iomux_v3_setup_multiple_pads(ecspi1_pads, ARRAY_SIZE(ecspi1_pads));
 
 	for (i = 0; i < 3; i++) {
@@ -873,7 +866,6 @@ int board_early_init_f(void)
 {
 	printf("%s\n", __FUNCTION__);
 	setup_iomux_uart();
-	printf("%s Finish success\n", __FUNCTION__);
 	return 0;
 }
 
@@ -899,8 +891,6 @@ int misc_init_r(void)
 			printf("Error - Bad MAC address (%s)\n", str);
 		else {
 			printf("Use MAC address from EEPROM (%s)\n", str);
-			// printf("Result : %i\n",setenv("ethaddr", str));
-			printf("Result : %i\n",setenv("ethaddr", "FC:C2:3D:2C:14:12"));
 		}
 	} else {
 		printf("Warning - Unable to read MAC from I2C device %02X @%04X\n",
@@ -920,7 +910,6 @@ int misc_init_r(void)
 			printf("Error - Bad 2nd MAC address (%s)\n", str);
 		else {
 			printf("Use 2nd MAC address from EEPROM (%s)\n", str);
-			printf("Result : %i\n",setenv("eth1addr", str));
 		}
 	} else {
 		printf("Warning - Unable to read MAC from I2C device %02X @%04X\n",
@@ -931,7 +920,6 @@ int misc_init_r(void)
 	if (!getenv("eth1addr"))
 		printf("2nd MAC address not set\n");
 
-	printf("%s Finish success\n", __FUNCTION__);
 	return 0;
 }
 
@@ -946,10 +934,9 @@ int board_init(void)
 	setup_dio();
 	
 #ifdef CONFIG_SYS_I2C_MXC
-	printf("Entering setup_i2c\n");
+	printf("setup_i2c\n");
 	setup_i2c(0, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info1);
 	setup_i2c(1, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info2);
-	printf("Finish setup_i2c\n");
 	setup_touch();
 #endif
 
@@ -1003,7 +990,6 @@ int board_late_init(void)
 #endif
 
 #ifdef CONFIG_ENV_IS_IN_MMC
-	printf("CONFIG_ENV_IS_IN_MMC run board_late_mmc_env_init\n");
 	board_late_mmc_env_init();
 #endif
 	

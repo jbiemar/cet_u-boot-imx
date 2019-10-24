@@ -72,12 +72,7 @@
 		"initrd_high=0xffffffff\0" \
 		"bootcmd_mfg=run mfgtool_args;bootz ${loadaddr} ${initrd_addr} ${fdt_addr};\0" \
 
-#define CONFIG_TEST_ENV_SETTINGS \
-	"panel=HX8258A\0" \
-	"splashaddr=0x97c90000\0" \
-	
-#define CONFIG_SPLASH_ENV_SETTINGS \
-	"test2=0x12\0" \
+/* ALTANEOS ADD */
 	
 #define CONFIG_HDMI_ENV_SETTINGS \
 	"video=mxcfb0:dev=hdmi,1920x1080M@60,bpp=32\0" \
@@ -86,7 +81,14 @@
 #define CONFIG_LCD_ENV_SETTINGS \
 	"video=mxcfb0:dev=lcd,HX8258A,if=RGB666\0" \
 	"mmcargs=setenv bootargs console=${console},${baudrate} video=${video} root=${mmcroot}\0" \
-	
+
+#define CONFIG_TEST_ENV_SETTINGS \
+	"splashaddr=0x97c90000\0" \
+	"mmcargs=setenv bootargs console=${console},${baudrate} ${smp} root=${mmcroot}\0" \
+
+
+/* END ALTANEOS ADD */
+
 #ifdef CONFIG_SUPPORT_EMMC_BOOT
 #define EMMC_ENV \
 	"emmcdev=2\0" \
@@ -152,7 +154,6 @@
 
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	CONFIG_MFG_ENV_SETTINGS \
-	CONFIG_TEST_ENV_SETTINGS \
 	"epdc_waveform=epdc_splash.bin\0" \
 	"script=boot.scr\0" \
 	"image=zImage\0" \
@@ -186,7 +187,7 @@
 		"fi\0" \
 	EMMC_ENV	  \
 	"smp=" CONFIG_SYS_NOSMP "\0"\
-	CONFIG_HDMI_ENV_SETTINGS \
+	CONFIG_TEST_ENV_SETTINGS \
 	"loadbootscript=" \
 		"fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${script};\0" \
 	"bootscript=echo Running bootscript from mmc ...; " \

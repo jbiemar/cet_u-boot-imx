@@ -805,13 +805,8 @@ int setup_splash(void)
 
 	snprintf(cmdarg, sizeof(cmdarg), "load mmc 1:2 %s /usr/share/splash_bmp/splash-big.bmp", strldaddr);
 	printf("Command : %s", cmdarg);
-	/*run_command(cmdarg, 0);*/
+	run_command(cmdarg, 0);
 	ret = bmp_display(ldaddr, 0, 0);
-	#ifdef _LCD_H_
-		printf("-------------ALTANEOS lcd.h defined\n");
-	#else
-		printf("-------------ALTANEOS lcd.h not defined\n");
-	#endif
 
 	return ret;
 }

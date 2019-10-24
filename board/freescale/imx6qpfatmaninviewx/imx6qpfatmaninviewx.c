@@ -793,9 +793,9 @@ int setup_splash(void)
 	if (strldaddr == NULL)
 		return 0;
 
-	snprintf(cmdarg, sizeof(cmdarg), "load mmc 1:5 %s /data/default/splash-normal.bmp", strldaddr);
+	snprintf(cmdarg, sizeof(cmdarg), "load mmc 3:2 %s /usr/share/splash_bmp/splash-big.bmp", strldaddr);
 	run_command(cmdarg, 0);
-	/* ret = bmp_display(ldaddr, 0, 0); ALTANEOS CHECK */
+	ret = bmp_display(ldaddr, 0, 0); ALTANEOS CHECK
 
 	return ret;
 }

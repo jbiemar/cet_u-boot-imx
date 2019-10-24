@@ -84,7 +84,7 @@
 	"mmcargs=setenv bootargs console=${console},${baudrate} video=${video} root=${mmcroot}\0" \
 	
 #define CONFIG_LCD_ENV_SETTINGS \
-	"video=mxcfb0:dev=lcd,600x400M@60,bpp=32\0" \
+	"video=mxcfb0:dev=lcd,HX8258A,if=RGB666\0" \
 	"mmcargs=setenv bootargs console=${console},${baudrate} video=${video} ${smp} root=${mmcroot}\0" \
 	
 #ifdef CONFIG_SUPPORT_EMMC_BOOT

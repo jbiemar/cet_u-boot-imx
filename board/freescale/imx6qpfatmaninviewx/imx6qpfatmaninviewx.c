@@ -612,8 +612,8 @@ static iomux_v3_cfg_t const lcd_pads[] = {
 void do_enable_parallel_lcd(struct display_info_t const *dev)
 {
 	imx_iomux_v3_setup_multiple_pads(lcd_pads, ARRAY_SIZE(lcd_pads));
-	printf("%s", __FUNCTION__);
-	gpio_direction_output(DISP0_PWR_EN, 0);
+	printf("%s\n", __FUNCTION__);
+	gpio_direction_output(DISP0_PWR_EN, 1);
 }
 
 struct display_info_t const displays[] = {

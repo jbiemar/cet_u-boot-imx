@@ -5,7 +5,7 @@
  *
  * SPDX-License-Identifier:	GPL-2.0+
  */
-#include <lcd.h>
+
 #include <asm/arch/clock.h>
 #include <asm/arch/imx-regs.h>
 #include <asm/arch/crm_regs.h>
@@ -41,6 +41,7 @@
 #endif
 #endif /*CONFIG_FSL_FASTBOOT*/
 
+#include <lcd.h>
 #include <command.h>
 #include <fs.h>
 #include <splash.h>

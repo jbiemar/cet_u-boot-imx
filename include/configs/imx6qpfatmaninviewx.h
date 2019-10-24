@@ -81,6 +81,7 @@
 
 #define CONFIG_SPLASH_SCREEN /* Already define in _common.h*/ 
 /*#define CONFIG_MXC_EPDC*/
+#define CONFIG_CMD_BMP
 
 /*
  * SPLASH SCREEN Configs

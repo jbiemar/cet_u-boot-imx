@@ -5,7 +5,7 @@
  *
  * SPDX-License-Identifier:	GPL-2.0+
  */
-
+#include <lcd.h>
 #include <asm/arch/clock.h>
 #include <asm/arch/imx-regs.h>
 #include <asm/arch/crm_regs.h>
@@ -44,7 +44,7 @@
 #include <command.h>
 #include <fs.h>
 #include <splash.h>
-#include <lcd.h>
+
 
 DECLARE_GLOBAL_DATA_PTR;
 

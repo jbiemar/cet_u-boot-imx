@@ -844,7 +844,8 @@ int setup_dio(void)
 	return 0;
 }
 
-int setup_splash(void)
+int setup_
+(void)
 {
 	int ret = 0;
 	char *strldaddr = NULL;

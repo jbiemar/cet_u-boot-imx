@@ -83,6 +83,10 @@
 	"video=mxcfb0:dev=hdmi,1920x1080M@60,bpp=32\0" \
 	"mmcargs=setenv bootargs console=${console},${baudrate} video=${video} root=${mmcroot}\0" \
 	
+#define CONFIG_LCD_ENV_SETTINGS \
+	"video=mxcfb0:dev=lcd,600x400M@60,bpp=32\0" \
+	"mmcargs=setenv bootargs console=${console},${baudrate} video=${video} ${smp} root=${mmcroot}\0" \
+	
 #ifdef CONFIG_SUPPORT_EMMC_BOOT
 #define EMMC_ENV \
 	"emmcdev=2\0" \
@@ -182,6 +186,7 @@
 		"fi\0" \
 	EMMC_ENV	  \
 	"smp=" CONFIG_SYS_NOSMP "\0"\
+	CONFIG_LCD_ENV_SETTINGS \
 	"loadbootscript=" \
 		"fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${script};\0" \
 	"bootscript=echo Running bootscript from mmc ...; " \

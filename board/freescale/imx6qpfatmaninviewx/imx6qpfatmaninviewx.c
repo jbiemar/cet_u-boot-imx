@@ -32,10 +32,10 @@
 #include <asm/arch/mx6-ddr.h>
 #include <usb.h>
 
-/*#include <lcd.h>
+#include <lcd.h>
 #include <command.h>
 #include <fs.h>
-#include <splash.h>*/
+#include <splash.h>
 
 #ifdef CONFIG_CMD_SATA
 #include <asm/imx-common/sata.h>

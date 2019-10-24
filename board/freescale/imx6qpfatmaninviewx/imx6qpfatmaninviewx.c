@@ -31,6 +31,16 @@
 #include "../common/pfuze.h"
 #include <asm/arch/mx6-ddr.h>
 #include <usb.h>
+	#ifdef _LCD_H_
+		printf("("-------------ALTANEOS lcd.h defined");
+	#else
+		printf("-------------ALTANEOS lcd.h not defined");
+	#endif
+#include <lcd.h>
+#include <command.h>
+#include <fs.h>
+#include <splash.h>
+
 #ifdef CONFIG_CMD_SATA
 #include <asm/imx-common/sata.h>
 #endif
@@ -41,10 +51,7 @@
 #endif
 #endif /*CONFIG_FSL_FASTBOOT*/
 
-#include <lcd.h>
-#include <command.h>
-#include <fs.h>
-#include <splash.h>
+
 
 
 DECLARE_GLOBAL_DATA_PTR;
@@ -802,7 +809,12 @@ int setup_splash(void)
 
 	snprintf(cmdarg, sizeof(cmdarg), "load mmc 3:2 %s /usr/share/splash_bmp/splash-big.bmp", strldaddr);
 	run_command(cmdarg, 0);
-	ret = bmp_display(ldaddr, 0, 0);
+	/*ret = bmp_display(ldaddr, 0, 0);*/
+	#ifdef _LCD_H_
+		printf("("-------------ALTANEOS lcd.h defined");
+	#else
+		printf("-------------ALTANEOS lcd.h not defined");
+	#endif
 
 	return ret;
 }

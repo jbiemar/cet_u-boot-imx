@@ -32,7 +32,7 @@
 #include <asm/arch/mx6-ddr.h>
 #include <usb.h>
 	#ifdef _LCD_H_
-		printf("("-------------ALTANEOS lcd.h defined");
+		printf("-------------ALTANEOS lcd.h defined");
 	#else
 		printf("-------------ALTANEOS lcd.h not defined");
 	#endif
@@ -811,7 +811,7 @@ int setup_splash(void)
 	run_command(cmdarg, 0);
 	/*ret = bmp_display(ldaddr, 0, 0);*/
 	#ifdef _LCD_H_
-		printf("("-------------ALTANEOS lcd.h defined");
+		printf("-------------ALTANEOS lcd.h defined");
 	#else
 		printf("-------------ALTANEOS lcd.h not defined");
 	#endif

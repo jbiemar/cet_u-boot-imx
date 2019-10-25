@@ -867,7 +867,7 @@ int setup_splash(void)
 
 	/*snprintf(cmdarg, sizeof(cmdarg), "load mmc 1:2 ${loadaddr} /usr/share/splash_bmp/splash-normal.bmp; bmp display ${loadaddr} 0 0");
 	printf("Command : %s", cmdarg);*/
-	run_command("load mmc 1:2 0x04f00000 /usr/share/splash_bmp/splash-normal.bmp; bmp display 0x04f00000 0 0", 0);
+	run_command("load mmc 1:2 0x04000000 /usr/share/splash_bmp/splash-normal.bmp; bmp display 0x04000000 0 0", 0);
 	/*ret = bmp_display(ldaddr, 0, 0);*/
 
 	return 0;

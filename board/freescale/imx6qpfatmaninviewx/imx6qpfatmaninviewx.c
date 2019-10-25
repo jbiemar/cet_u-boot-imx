@@ -848,29 +848,29 @@ int setup_dio(void)
 
 int setup_splash(void)
 {
-	int ret = 0;
+	/*int ret = 0;
 	char *strldaddr = NULL;
 	ulong ldaddr = 0;
 
-	char cmdarg[64];
+	char cmdarg[64];*/
 
 	printf("%s\n", __FUNCTION__);
 
-	memset(strldaddr, 0, sizeof(strldaddr));
+	/*memset(strldaddr, 0, sizeof(strldaddr));
 	if (!getenv("loadaddr"))
 		return 0;
 	strldaddr = getenv("loadaddr");
 	ldaddr = getenv_hex("loadaddr", 0);
 	printf("ldaddr = %s (0x%X)\n", strldaddr, (unsigned int) ldaddr);
 	if (strldaddr == NULL)
-		return 0;
+		return 0;*/
 
-	snprintf(cmdarg, sizeof(cmdarg), "load mmc 1:2 %s /usr/share/splash_bmp/splash-normal.bmp", strldaddr);
-	printf("Command : %s", cmdarg);
-	/*run_command(cmdarg, 0);
-	ret = bmp_display(ldaddr, 0, 0);*/
+	/*snprintf(cmdarg, sizeof(cmdarg), "load mmc 1:2 ${loadaddr} /usr/share/splash_bmp/splash-normal.bmp; bmp display ${loadaddr} 0 0");
+	printf("Command : %s", cmdarg);*/
+	run_command("load mmc 1:2 ${loadaddr} /usr/share/splash_bmp/splash-normal.bmp; bmp display ${loadaddr} 0 0", 0);
+	/*ret = bmp_display(ldaddr, 0, 0);*/
 
-	return ret;
+	return 0;
 }
 
 #ifdef CONFIG_USB_EHCI_MX6

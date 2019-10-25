@@ -90,7 +90,7 @@
 
 #ifdef CONFIG_SUPPORT_EMMC_BOOT
 #define EMMC_ENV \
-	"emmcdev=2\0" \
+	"emmcdev=1\0" \
 	"update_emmc_firmware=" \
 		"if test ${ip_dyn} = yes; then " \
 			"setenv get_cmd dhcp; " \
@@ -109,47 +109,6 @@
 #endif
 
 #define CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
-
-#if defined(CONFIG_SYS_BOOT_NAND)
-	/*
-	 * The dts also enables the WEIN NOR which is mtd0.
-	 * So the partions' layout for NAND is:
-	 *     mtd1: 16M      (uboot)
-	 *     mtd2: 16M      (kernel)
-	 *     mtd3: 16M      (dtb)
-	 *     mtd4: left     (rootfs)
-	 */
-#define CONFIG_EXTRA_ENV_SETTINGS \
-	CONFIG_MFG_ENV_SETTINGS \
-	CONFIG_TEST_ENV_SETTINGS \
-	CONFIG_HDMI_ENV_SETTINGS \
-	"fdt_addr=0x18000000\0" \
-	"fdt_high=0xffffffff\0"	  \
-	"bootargs=console=" CONFIG_CONSOLE_DEV ",115200 ubi.mtd=5 "  \
-		"root=ubi0:rootfs rootfstype=ubifs "		     \
-		"mtdparts=gpmi-nand:64m(boot),16m(kernel),16m(dtb),1m(misc),-(rootfs)\0"\
-	"bootcmd=nand read ${loadaddr} 0x4000000 0x800000;"\
-		"nand read ${fdt_addr} 0x5000000 0x100000;"\
-		"bootz ${loadaddr} - ${fdt_addr}\0"
-
-#elif defined(CONFIG_SYS_BOOT_SATA)
-
-#define CONFIG_EXTRA_ENV_SETTINGS \
-		CONFIG_MFG_ENV_SETTINGS \
-		CONFIG_TEST_ENV_SETTINGS \
-		CONFIG_HDMI_ENV_SETTINGS \
-		"fdt_addr=0x18000000\0" \
-		"fdt_high=0xffffffff\0"   \
-		"bootargs=console=" CONFIG_CONSOLE_DEV ",115200 \0"\
-		"bootargs_sata=setenv bootargs ${bootargs} " \
-			"root=/dev/sda1 rootwait rw \0" \
-		"bootcmd_sata=run bootargs_sata; sata init; " \
-			"sata read ${loadaddr} 0x800  0x4000; " \
-			"sata read ${fdt_addr} 0x8000 0x800; " \
-			"bootz ${loadaddr} - ${fdt_addr} \0" \
-		"bootcmd=run bootcmd_sata \0"
-
-#else
 
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	CONFIG_MFG_ENV_SETTINGS \
@@ -186,9 +145,7 @@
 		"fi\0" \
 	EMMC_ENV	  \
 	"smp=" CONFIG_SYS_NOSMP "\0"\
-	"mmcargs=setenv bootargs console=${console},${baudrate} " \
-		"root=${mmcroot}\0" \
-	CONFIG_TEST_ENV_SETTINGS \
+	CONFIG_HDMI_ENV_SETTINGS \
 	"loadbootscript=" \
 		"fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${script};\0" \
 	"bootscript=echo Running bootscript from mmc ...; " \
@@ -236,18 +193,6 @@
 		"fi;\0" \
 		"findfdt="\
 			"if test $fdt_file = undefined; then " \
-				"if test $board_name = SABREAUTO && test $board_rev = MX6QP; then " \
-					"setenv fdt_file imx6qp-sabreauto.dtb; fi; " \
-				"if test $board_name = SABREAUTO && test $board_rev = MX6Q; then " \
-					"setenv fdt_file imx6q-sabreauto.dtb; fi; " \
-				"if test $board_name = SABREAUTO && test $board_rev = MX6DL; then " \
-					"setenv fdt_file imx6dl-sabreauto.dtb; fi; " \
-				"if test $board_name = SABRESD && test $board_rev = MX6QP; then " \
-					"setenv fdt_file imx6qp-sabresd.dtb; fi; " \
-				"if test $board_name = SABRESD && test $board_rev = MX6Q; then " \
-					"setenv fdt_file imx6q-sabresd.dtb; fi; " \
-				"if test $board_name = SABRESD && test $board_rev = MX6DL; then " \
-					"setenv fdt_file imx6dl-sabresd.dtb; fi; " \
 				"if test $board_name = IMX6QPFATMANINVIEWX && test $board_rev = MX6QP; then " \
 					"setenv fdt_file imx6qp-fatman-inviewx.dtb; fi; " \
 				"if test $fdt_file = undefined; then " \
@@ -268,7 +213,7 @@
 			"fi; " \
 		"fi; " \
 	"else run netboot; fi"
-#endif
+
 
 #define CONFIG_ARP_TIMEOUT     200UL
 
@@ -413,11 +358,11 @@
 #define CONFIG_SYS_CONSOLE_IS_IN_ENV
 #define CONFIG_SYS_CONSOLE_OVERWRITE_ROUTINE
 #define CONFIG_VIDEO_BMP_RLE8
-#define CONFIG_SPLASH_SCREEN
+/*#define CONFIG_SPLASH_SCREEN
 #define CONFIG_SPLASH_SCREEN_ALIGN
 #define CONFIG_BMP_16BPP
 #define CONFIG_VIDEO_LOGO
-#define CONFIG_VIDEO_BMP_LOGO
+#define CONFIG_VIDEO_BMP_LOGO*/
 #ifdef CONFIG_MX6DL
 #define CONFIG_IPUV3_CLK 198000000
 #else

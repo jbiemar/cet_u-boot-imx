@@ -605,11 +605,11 @@ static iomux_v3_cfg_t const lcd_pads[] = {
 	MX6_PAD_GPIO_3__GPIO1_IO03 | MUX_PAD_CTRL(PAD_CTL_PUS_100K_DOWN),
 
 	/* LCD_PWM */
-	MX6_PAD_SD1_DAT3__GPIO4_IO29 | MUX_PAD_CTRL(NO_PAD_CTRL),
+	MX6_PAD_SD1_DAT3__GPIO1_IO21 | MUX_PAD_CTRL(NO_PAD_CTRL),
 };
 
 #define DISP0_PWR_EN IMX_GPIO_NR(1, 3)
-#define DISP0_BACKLIGHT_EN IMX_GPIO_NR(4, 29)
+#define DISP0_BACKLIGHT_EN IMX_GPIO_NR(1, 21)
 void do_enable_parallel_lcd(struct display_info_t const *dev)
 {
 	imx_iomux_v3_setup_multiple_pads(lcd_pads, ARRAY_SIZE(lcd_pads));

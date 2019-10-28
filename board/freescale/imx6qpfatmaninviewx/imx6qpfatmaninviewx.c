@@ -546,7 +546,7 @@ static void setup_fec(void)
 
 		// select ENET MAC0 TX clock from PLL  //
 		imx_iomux_set_gpr_register(5, 9, 1, 1);		
-		ret = enable_fec_anatop_clock(0, ENET_125MHZ);
+		ret = enable_fec_anatop_clock(0, ENET_50MHZ);
 		if (ret)
 		    printf("Error fec anatop clock settings!\n");
 	}

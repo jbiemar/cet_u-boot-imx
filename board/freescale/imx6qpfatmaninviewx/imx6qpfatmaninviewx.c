@@ -500,6 +500,7 @@ static iomux_v3_cfg_t const enet_pads[] = {
 	MX6_PAD_ENET_RXD1__ENET_RX_DATA1 | MUX_PAD_CTRL(ENET_PAD_CTRL),
 	MX6_PAD_ENET_RX_ER__ENET_RX_ER | MUX_PAD_CTRL(ENET_PAD_CTRL),
 	MX6_PAD_ENET_CRS_DV__ENET_RX_EN | MUX_PAD_CTRL(ENET_PAD_CTRL),
+	MX6_PAD_GPIO_16__ENET_REF_CLK | MUX_PAD_CTRL(ENET_PAD_CTRL),
 };
 
 static iomux_v3_cfg_t const fec_rst_pads[] = {
@@ -553,6 +554,7 @@ static void setup_fec(void)
 
 int board_eth_init(bd_t *bis)
 {
+	printf("%s\n", __FUNCTION__);
 	setup_iomux_enet();
 
 	return cpu_eth_init(bis);

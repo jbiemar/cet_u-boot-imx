@@ -32,11 +32,6 @@
 #include <asm/arch/mx6-ddr.h>
 #include <usb.h>
 
-/*#include <lcd.h>
-#include <command.h>
-#include <fs.h>
-#include <splash.h>*/
-
 #ifdef CONFIG_CMD_SATA
 #include <asm/imx-common/sata.h>
 #endif
@@ -93,6 +88,7 @@ DECLARE_GLOBAL_DATA_PTR;
 
 #ifdef CONFIG_SYS_I2C_MXC
 #define I2C_PAD MUX_PAD_CTRL(I2C_PAD_CTRL)
+
 /* I2C1 for PMIC and EEPROM */
 static struct i2c_pads_info i2c_pad_info1 = {
 	.scl = {
@@ -418,8 +414,8 @@ int board_mmc_init(bd_t *bis)
 	/*
 	 * According to the board_mmc_init() the following map is done:
 	 * (U-Boot device node)    (Physical Port)
-	 * mmc0                    USDHC1
-	 * mmc1                    USDHC2
+	 * mmc0                    USDHC3
+	 * mmc1                    USDHC4
 	 */
 	for (i = 0; i < CONFIG_SYS_FSL_USDHC_NUM; i++) {
 		switch (i) {

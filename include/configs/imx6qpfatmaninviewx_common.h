@@ -115,7 +115,6 @@
 	"epdc_waveform=epdc_splash.bin\0" \
 	"script=boot.scr\0" \
 	"image=zImage\0" \
-	"kernel_file=/boot/fitImage\0" \
 	"fdt_file=undefined\0" \
 	"fdt_addr=0x18000000\0" \
 	"boot_fdt=try\0" \
@@ -128,7 +127,7 @@
 	"fdt_high=0xffffffff\0"	  \
 	"initrd_high=0xffffffff\0" \
 	"mmcdev=" __stringify(CONFIG_SYS_MMC_ENV_DEV) "\0" \
-	"mmcpart= __stringify(CONFIG_SYS_MMC_IMG_LOAD_PART)\0" \
+	"mmcpart= 1" \
 	"mmcroot=" CONFIG_MMCROOT " rootwait rw\0" \
 	"mmcautodetect=yes\0" \
 	"update_sd_firmware=" \
@@ -146,7 +145,6 @@
 		"fi\0" \
 	EMMC_ENV	  \
 	"smp=" CONFIG_SYS_NOSMP "\0"\
-	"mmcload=ext2load mmc ${mmcdev}:${mmcpart} ${loadaddr} ${kernel_file}\0" \
 	"mmcargs=setenv bootargs console=${console},${baudrate} root=${mmcroot}\0" \
 	"loadbootscript=" \
 		"fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${script};\0" \
@@ -154,8 +152,21 @@
 		"source\0" \
 	"loadimage=fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${image}\0" \
 	"loadfdt=fatload mmc ${mmcdev}:${mmcpart} ${fdt_addr} ${fdt_file}\0" \
-	"fitconf=1\0" \
-	"mmcboot= run mmcload ; run mmcargs ; bootm ${loadaddr}#conf@${fitconf}\0" \
+	"mmcboot=echo Booting from mmc ...; " \
+		"run mmcargs; " \
+		"if test ${boot_fdt} = yes || test ${boot_fdt} = try; then " \
+			"if run loadfdt; then " \
+				"bootz ${loadaddr} - ${fdt_addr}; " \
+			"else " \
+				"if test ${boot_fdt} = try; then " \
+					"bootz; " \
+				"else " \
+					"echo WARN: Cannot load the DT; " \
+				"fi; " \
+			"fi; " \
+		"else " \
+			"bootz; " \
+		"fi;\0" \
 	"netargs=setenv bootargs console=${console},${baudrate} ${smp} " \
 		"root=/dev/nfs " \
 		"ip=dhcp nfsroot=${serverip}:${nfsroot},v3,tcp\0" \

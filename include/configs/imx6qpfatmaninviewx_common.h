@@ -127,7 +127,7 @@
 	"fdt_high=0xffffffff\0"	  \
 	"initrd_high=0xffffffff\0" \
 	"panel=HX8258A\0" \
-    "kernel_file=/boot/palermo.itb\0" \
+    "kernel_file=/boot/fitImage\0" \
 	"mmcdev=" __stringify(CONFIG_SYS_MMC_ENV_DEV) "\0" \
 	"mmcpart=5\0" \
 	"mmcroot=" CONFIG_MMCROOT " rootwait rw\0" \

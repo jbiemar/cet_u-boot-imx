@@ -132,16 +132,49 @@
 	"smp=" CONFIG_SYS_NOSMP "\0"\
 	"mmcload=ext2load mmc ${mmcdev}:${mmcpart} ${loadaddr} ${kernel_file}\0" \
 	"mmcargs=setenv bootargs console=${console},${baudrate} root=${mmcroot}\0" \
+	"loadbootscript=" \
+		"ext2load mmc ${mmcdev}:${mmcpart} ${loadaddr} ${script};\0" \
+	"bootscript=echo Running bootscript from mmc ...; " \
+		"source\0" \
+	"loadimage=ext2load mmc ${mmcdev}:${mmcpart} ${loadaddr} ${image}\0" \
+	"loadfdt=ext2load mmc ${mmcdev}:${mmcpart} ${fdt_addr} ${fdt_file}\0" \
+	"mmcboot=echo Booting from mmc ...; " \
+		"run mmcargs; " \
+		"if test ${boot_fdt} = yes || test ${boot_fdt} = try; then " \
+			"if run loadfdt; then " \
+				"bootz ${loadaddr} - ${fdt_addr}; " \
+			"else " \
+				"if test ${boot_fdt} = try; then " \
+					"bootz; " \
+				"else " \
+					"echo WARN: Cannot load the DT; " \
+				"fi; " \
+			"fi; " \
+		"else " \
+			"bootz; " \
+		"fi;\0" \
     "fitconf=1\0" \
     "mode=upgrade\0" \
-    "mmcboot= run mmcload ; run mmcargs ; bootm ${loadaddr}#conf@${fitconf}\0" \
 	"boot_system=echo Booting system ...; setenv mode default; run mmcboot\0" \
     "boot_upgrade=echo Booting system ...; setenv mode upgrade; run mmcboot\0" \
     "boot_systemnoup=echo Booting system ...; setenv mode primary; run mmcboot\0" \
     "boot_recovery=echo Booting system ...; setenv mode recovery; run mmcboot\0" \
 	"test0=test1\0" \
-
-#define CONFIG_BOOTCOMMAND "run boot_system; run boot_recovery"
+/*     "mmcboot= run mmcload ; run mmcargs ; bootm ${loadaddr}#conf@${fitconf}\0" \ */
+/*#define CONFIG_BOOTCOMMAND "run boot_system; run boot_recovery"*/
+#define CONFIG_BOOTCOMMAND \
+	"run findfdt;" \
+	"mmc dev ${mmcdev};" \
+	"if mmc rescan; then " \
+		"if run loadbootscript; then " \
+		"run bootscript; " \
+		"else " \
+			"if run loadimage; then " \
+				"run mmcboot; " \
+			"else run netboot; " \
+			"fi; " \
+		"fi; " \
+	"else run netboot; fi"
 
 
 #define CONFIG_ARP_TIMEOUT     200UL

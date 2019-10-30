@@ -23,7 +23,6 @@
 #define CONFIG_MACH_TYPE	3980
 #define CONFIG_MXC_UART_BASE	UART1_BASE
 #define CONFIG_CONSOLE_DEV		"ttymxc0"
-#define CONFIG_MMCROOT			"/dev/mmcblk3p5"  /* SDHC4 */
 
 #if defined(CONFIG_MX6QP)
 #define PHYS_SDRAM_SIZE		(1u * 1024 * 1024 * 1024)

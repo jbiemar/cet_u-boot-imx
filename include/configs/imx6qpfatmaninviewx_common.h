@@ -131,7 +131,7 @@
 	EMMC_ENV	  \
 	"smp=" CONFIG_SYS_NOSMP "\0"\
 	"mmcload=ext2load mmc ${mmcdev}:${mmcpart} ${loadaddr} ${kernel_file}\0" \
-	"mmcargs=setenv mmcboot /dev/mmcblk3p5 rootwait rw ; setenv bootargs console=${console},${baudrate} root=${mmcroot}\0" \
+	"mmcargs=setenv mmcroot /dev/mmcblk3p5 rootwait rw ; setenv bootargs console=${console},${baudrate} root=${mmcroot}\0" \
     "fitconf=1\0" \
     "mode=upgrade\0" \
     "mmcboot= run mmcload ; run mmcargs ; bootm ${loadaddr}#conf@${fitconf}\0" \

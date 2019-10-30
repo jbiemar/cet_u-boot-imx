@@ -126,7 +126,7 @@
     "kernel_file=/boot/imx6qp-fatman-inviewx.itb\0" \
 	"mmcdev=" __stringify(CONFIG_SYS_MMC_ENV_DEV) "\0" \
 	"mmcpart=5\0" \
-	"mmcroot=/dev/mmcblk3p5 rootwait rw\0" \
+	"mmcroot=" CONFIG_MMCROOT " rootwait rw\0" \
 	"mmcautodetect=yes\0" \
 	EMMC_ENV \
 	"smp=" CONFIG_SYS_NOSMP "\0"\

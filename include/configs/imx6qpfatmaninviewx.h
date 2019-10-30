@@ -19,6 +19,7 @@
 #define CONFIG_SYS_MMC_ENV_DEV		1	/* SDHC3 emmc1*/
 #define CONFIG_SYS_MMC_ENV_PART     0       /* user partition */
 
+#define CONFIG_MMCROOT 		"/dev/mmcblk3p5"		
 
 #define CONFIG_MACH_TYPE	3980
 #define CONFIG_MXC_UART_BASE	UART1_BASE

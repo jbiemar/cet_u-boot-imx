@@ -15,8 +15,8 @@
 /* #define CONFIG_USE_PLUGIN */
 
 /* uncomment for SECURE mode support */
-#define CONFIG_SECURE_BOOT
-#define CONFIG_ITB_SIZE 0x0065C2C8 /* 6669000 */
+/*#define CONFIG_SECURE_BOOT
+#define CONFIG_ITB_SIZE 0x0065C2C8*/ /* 6669000 */
 
 #ifdef CONFIG_SECURE_BOOT
 #ifndef CONFIG_CSF_SIZE
@@ -125,13 +125,13 @@
 	"panel=HX8258A\0" \
     "kernel_file=/boot/imx6qp-fatman-inviewx.itb\0" \
 	"mmcdev=" __stringify(CONFIG_SYS_MMC_ENV_DEV) "\0" \
-	"mmcpart=0\0" \
+	"mmcpart=5\0" \
 	"mmcroot=/dev/mmcblk3p5 rootwait rw\0" \
 	"mmcautodetect=yes\0" \
 	EMMC_ENV \
 	"smp=" CONFIG_SYS_NOSMP "\0"\
 	"mmcload=ext2load mmc ${mmcdev}:${mmcpart} ${loadaddr} ${kernel_file}\0" \
-	"mmcargs=setenv mmcroot /dev/mmcblk3p5 rootwait rw ; setenv bootargs console=${console},${baudrate} root=${mmcroot}\0" \
+	"mmcargs=setenv bootargs console=${console},${baudrate} root=${mmcroot}\0" \
     "fitconf=1\0" \
     "mode=upgrade\0" \
     "mmcboot= run mmcload ; run mmcargs ; bootm ${loadaddr}#conf@${fitconf}\0" \

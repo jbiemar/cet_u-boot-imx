@@ -845,7 +845,7 @@ int setup_dio(void)
 
 int setup_splash(void)
 {
-	/*int ret = 0;
+	int ret = 0;
 	char *strldaddr = NULL;
 	ulong ldaddr = 0;
 
@@ -853,19 +853,16 @@ int setup_splash(void)
 
 	printf("%s\n", __FUNCTION__);
 
-	/*memset(strldaddr, 0, sizeof(strldaddr));
-	if (!getenv("loadaddr"))
+	memset(strldaddr, 0, sizeof(strldaddr));
+	if (!getenv("splashaddr"))
 		return 0;
-	strldaddr = getenv("loadaddr");
-	ldaddr = getenv_hex("loadaddr", 0);
+	strldaddr = getenv("splashaddr");
+	ldaddr = getenv_hex("splashaddr", 0);
 	printf("ldaddr = %s (0x%X)\n", strldaddr, (unsigned int) ldaddr);
 	if (strldaddr == NULL)
 		return 0;*/
 
-	/*snprintf(cmdarg, sizeof(cmdarg), "load mmc 1:2 ${loadaddr} /usr/share/splash_bmp/splash-normal.bmp; bmp display ${loadaddr} 0 0");
-	printf("Command : %s", cmdarg);*/
-	run_command("load mmc 1:5 0x20000000 /usr/share/splash_bmp/splash-normal.bmp; bmp display 0x20000000 0 0", 0);
-	/*ret = bmp_display(ldaddr, 0, 0);*/
+	run_command("load mmc 1:5 ${splashaddr} /usr/share/splash_bmp/splash-normal.bmp; bmp display ${splashaddr} 0 0", 0);
 
 	return 0;
 }

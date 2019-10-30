@@ -109,7 +109,7 @@
 	CONFIG_MFG_ENV_SETTINGS \
 	"epdc_waveform=epdc_splash.bin\0" \
 	"script=boot.scr\0" \
-	"image=zImage\0" \
+	"image=/boot/zImage\0" \
 	"fdt_file=undefined\0" \
 	"fdt_addr=0x18000000\0" \
 	"boot_fdt=try\0" \
@@ -180,7 +180,7 @@
 	"findfdt="\
 		"if test $fdt_file = undefined; then " \
 			"if test $board_name = IMX6QPFATMANINVIEWX && test $board_rev = MX6QP; then " \
-				"setenv fdt_file imx6qp-fatman-inviewx.dtb; fi; " \
+				"setenv fdt_file /boot/imx6qp-fatman-inviewx.dtb; fi; " \
 			"if test $fdt_file = undefined; then " \
 				"echo WARNING: Could not determine dtb to use; fi; " \
 		"fi;\0" \
@@ -194,7 +194,7 @@
 /*     "mmcboot= run mmcload ; run mmcargs ; bootm ${loadaddr}#conf@${fitconf}\0" \ */
 #define CONFIG_BOOTCOMMAND \
 	"run findfdt;" \
-	"mmc dev ${mmcdev}:${mmcpart};" \
+	"mmc dev ${mmcdev};" \
 	"if mmc rescan; then " \
 		"if run loadbootscript; then " \
 		"run bootscript; " \

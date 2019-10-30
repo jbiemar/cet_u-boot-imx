@@ -153,6 +153,37 @@
 		"else " \
 			"bootz; " \
 		"fi;\0" \
+	"netargs=setenv bootargs console=${console},${baudrate} ${smp} " \
+		"root=/dev/nfs " \
+		"ip=dhcp nfsroot=${serverip}:${nfsroot},v3,tcp\0" \
+	"netboot=echo Booting from net ...; " \
+		"run netargs; " \
+		"if test ${ip_dyn} = yes; then " \
+			"setenv get_cmd dhcp; " \
+		"else " \
+			"setenv get_cmd tftp; " \
+		"fi; " \
+		"${get_cmd} ${image}; " \
+		"if test ${boot_fdt} = yes || test ${boot_fdt} = try; then " \
+			"if ${get_cmd} ${fdt_addr} ${fdt_file}; then " \
+				"bootz ${loadaddr} - ${fdt_addr}; " \
+			"else " \
+				"if test ${boot_fdt} = try; then " \
+					"bootz; " \
+				"else " \
+					"echo WARN: Cannot load the DT; " \
+				"fi; " \
+			"fi; " \
+		"else " \
+			"bootz; " \
+		"fi;\0" \
+	"findfdt="\
+		"if test $fdt_file = undefined; then " \
+			"if test $board_name = IMX6QPFATMANINVIEWX && test $board_rev = MX6QP; then " \
+				"setenv fdt_file imx6qp-fatman-inviewx.dtb; fi; " \
+			"if test $fdt_file = undefined; then " \
+				"echo WARNING: Could not determine dtb to use; fi; " \
+		"fi;\0" \
     "fitconf=1\0" \
     "mode=upgrade\0" \
 	"boot_system=echo Booting system ...; setenv mode default; run mmcboot\0" \
@@ -161,7 +192,6 @@
     "boot_recovery=echo Booting system ...; setenv mode recovery; run mmcboot\0" \
 	"test0=test1\0" \
 /*     "mmcboot= run mmcload ; run mmcargs ; bootm ${loadaddr}#conf@${fitconf}\0" \ */
-/*#define CONFIG_BOOTCOMMAND "run boot_system; run boot_recovery"*/
 #define CONFIG_BOOTCOMMAND \
 	"run findfdt;" \
 	"mmc dev ${mmcdev};" \

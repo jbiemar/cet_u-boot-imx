@@ -857,7 +857,7 @@ int setup_splash(void)
 	ldaddr = getenv_hex("splashaddr", 0);
 	printf("ldaddr = %s (0x%X)\n", strldaddr, (unsigned int) ldaddr);
 	if (strldaddr == NULL)
-		return 0;*/
+		return 0;
 
 	run_command("load mmc 1:5 ${splashaddr} /usr/share/splash_bmp/splash-normal.bmp; bmp display ${splashaddr} 0 0", 0);
 

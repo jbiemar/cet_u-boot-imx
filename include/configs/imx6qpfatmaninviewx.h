@@ -17,7 +17,7 @@
 
 #define CONFIG_SYS_FSL_USDHC_NUM	2
 #define CONFIG_SYS_MMC_ENV_DEV		1	/* SDHC3 emmc1*/
-#define CONFIG_SYS_MMC_ENV_PART     5       /* user partition */
+#define CONFIG_SYS_MMC_ENV_PART     0       /* user partition */
 
 
 #define CONFIG_MACH_TYPE	3980

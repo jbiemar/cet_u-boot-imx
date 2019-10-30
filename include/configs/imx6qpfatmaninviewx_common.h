@@ -126,7 +126,7 @@
     "kernel_file=/boot/imx6qp-fatman-inviewx.itb\0" \
 	"mmcdev=" __stringify(CONFIG_SYS_MMC_ENV_DEV) "\0" \
 	"mmcpart=5\0" \
-	"mmcroot=/dev/mmcblk3p5 rootwait rw\0" \
+	"mmcroot=/dev/mmcblk3p5 rootwait rw\0" \ /* Changed in CONFIG_BOOTCOMMAND */
 	"mmcautodetect=yes\0" \
 	EMMC_ENV \
 	"smp=" CONFIG_SYS_NOSMP "\0"\
@@ -194,6 +194,7 @@
 /*     "mmcboot= run mmcload ; run mmcargs ; bootm ${loadaddr}#conf@${fitconf}\0" \ */
 #define CONFIG_BOOTCOMMAND \
 	"run findfdt;" \
+	"setenv mmcroot /dev/mmcblk3p5 rootwait rw;" \
 	"mmc dev ${mmcdev};" \
 	"if mmc rescan; then " \
 		"if run loadbootscript; then " \

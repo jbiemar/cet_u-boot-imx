@@ -194,7 +194,7 @@
 /*     "mmcboot= run mmcload ; run mmcargs ; bootm ${loadaddr}#conf@${fitconf}\0" \ */
 #define CONFIG_BOOTCOMMAND \
 	"run findfdt;" \
-	"mmc dev ${mmcdev};" \
+	"mmc dev ${mmcdev}:${mmcpart};" \
 	"if mmc rescan; then " \
 		"if run loadbootscript; then " \
 		"run bootscript; " \

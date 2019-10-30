@@ -845,11 +845,8 @@ int setup_dio(void)
 
 int setup_splash(void)
 {
-	int ret = 0;
 	char *strldaddr = NULL;
 	ulong ldaddr = 0;
-
-	char cmdarg[64];*/
 
 	printf("%s\n", __FUNCTION__);
 

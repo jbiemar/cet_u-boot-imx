@@ -282,11 +282,11 @@
 #define CONFIG_G_DNL_MANUFACTURER	"FSL"
 
 /* USB Device Firmware Update support */
-#define CONFIG_CMD_DFU
+/*#define CONFIG_CMD_DFU
 #define CONFIG_USB_FUNCTION_DFU
 #define CONFIG_DFU_MMC
 #if defined(CONFIG_SYS_USE_SPINOR)
 #define CONFIG_DFU_SF
-#endif
+#endif*/
 
 #endif                         /* __IMX6QPFATMANINVIEWX_CONFIG_H */

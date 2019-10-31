@@ -32,19 +32,6 @@
 #include <asm/arch/mx6-ddr.h>
 #include <usb.h>
 
-#ifdef CONFIG_CMD_SATA
-#include <asm/imx-common/sata.h>
-#endif
-#ifdef CONFIG_FSL_FASTBOOT
-#include <fsl_fastboot.h>
-#ifdef CONFIG_ANDROID_RECOVERY
-#include <recovery.h>
-#endif
-#endif /*CONFIG_FSL_FASTBOOT*/
-
-
-
-
 DECLARE_GLOBAL_DATA_PTR;
 
 #define UART_PAD_CTRL  (PAD_CTL_PKE | PAD_CTL_PUE |		\
@@ -64,21 +51,8 @@ DECLARE_GLOBAL_DATA_PTR;
 	PAD_CTL_SPEED_MED | \
 	PAD_CTL_DSE_40ohm | PAD_CTL_SRE_FAST)
 	
-#define ENET_PAD_CTRL  (PAD_CTL_PUS_100K_UP | PAD_CTL_PUE |     \
-	PAD_CTL_SPEED_HIGH   |                                  \
-	PAD_CTL_DSE_48ohm   | PAD_CTL_SRE_FAST)	
-	
 #define LCD_PAD_CTRL    (PAD_CTL_HYS | PAD_CTL_PUS_100K_UP | PAD_CTL_PUE | \
 	PAD_CTL_PKE | PAD_CTL_SPEED_MED | PAD_CTL_DSE_40ohm)
-
-#define MDIO_PAD_CTRL  (PAD_CTL_PUS_100K_UP | PAD_CTL_PUE |     \
-	PAD_CTL_DSE_48ohm   | PAD_CTL_SRE_FAST | PAD_CTL_ODE)
-
-#define ENET_CLK_PAD_CTRL  (PAD_CTL_DSE_40ohm   | PAD_CTL_SRE_FAST)
-
-#define SPI_PAD_CTRL (PAD_CTL_HYS |				\
-	PAD_CTL_SPEED_MED |		\
-	PAD_CTL_DSE_40ohm | PAD_CTL_SRE_FAST)
 
 #define FASTGPIO_PAD_CTRL (PAD_CTL_HYS |				\
 	PAD_CTL_SPEED_MED |		\
@@ -117,6 +91,7 @@ static struct i2c_pads_info i2c_pad_info2 = {
 		.gp = IMX_GPIO_NR(4, 13),
 	},
 };
+#endif
 
 #ifdef CONFIG_POWER
 int power_init_board(void)
@@ -207,120 +182,11 @@ int power_init_board(void)
 	}
 	return 0;
 }
-
-#ifdef CONFIG_LDO_BYPASS_CHECK
-void ldo_mode_set(int ldo_bypass)
-{
-	unsigned int value;
-	int is_400M;
-	unsigned char vddarm;
-	struct pmic *p = pmic_get("PFUZE100");
-
-	if (!p) {
-		printf("No PMIC found!\n");
-		return;
-	}
-
-	/* increase VDDARM/VDDSOC to support 1.2G chip */
-	if (check_1_2G()) {
-		ldo_bypass = 0;	/* ldo_enable on 1.2G chip */
-		printf("1.2G chip, increase VDDARM_IN/VDDSOC_IN\n");
-		if (is_mx6dqp()) {
-			/* increase VDDARM to 1.425V */
-			pmic_reg_read(p, PFUZE100_SW2VOL, &value);
-			value &= ~0x3f;
-			value |= 0x29;
-			pmic_reg_write(p, PFUZE100_SW2VOL, value);
-		} else {
-			/* increase VDDARM to 1.425V */
-			pmic_reg_read(p, PFUZE100_SW1ABVOL, &value);
-			value &= ~0x3f;
-			value |= 0x2d;
-			pmic_reg_write(p, PFUZE100_SW1ABVOL, value);
-		}
-		/* increase VDDSOC to 1.425V */
-		pmic_reg_read(p, PFUZE100_SW1CVOL, &value);
-		value &= ~0x3f;
-		value |= 0x2d;
-		pmic_reg_write(p, PFUZE100_SW1CVOL, value);
-	}
-	/* switch to ldo_bypass mode , boot on 800Mhz */
-	if (ldo_bypass) {
-		prep_anatop_bypass();
-		if (is_mx6dqp()) {
-			/* decrease VDDARM for 400Mhz DQP:1.1V*/
-			pmic_reg_read(p, PFUZE100_SW2VOL, &value);
-			value &= ~0x3f;
-			value |= 0x1c;
-			pmic_reg_write(p, PFUZE100_SW2VOL, value);
-		} else {
-			/* decrease VDDARM for 400Mhz DQ:1.1V, DL:1.275V */
-			pmic_reg_read(p, PFUZE100_SW1ABVOL, &value);
-			value &= ~0x3f;
-			if (is_cpu_type(MXC_CPU_MX6DL))
-				value |= 0x27;
-			else
-				value |= 0x20;
-
-			pmic_reg_write(p, PFUZE100_SW1ABVOL, value);
-		}
-		/* increase VDDSOC to 1.3V */
-		pmic_reg_read(p, PFUZE100_SW1CVOL, &value);
-		value &= ~0x3f;
-		value |= 0x28;
-		pmic_reg_write(p, PFUZE100_SW1CVOL, value);
-
-		/*
-		 * MX6Q/DQP:
-		 * VDDARM:1.15V@800M; VDDSOC:1.175V@800M
-		 * VDDARM:0.975V@400M; VDDSOC:1.175V@400M
-		 * MX6DL:
-		 * VDDARM:1.175V@800M; VDDSOC:1.175V@800M
-		 * VDDARM:1.075V@400M; VDDSOC:1.175V@400M
-		 */
-		is_400M = set_anatop_bypass(2);
-		if (is_mx6dqp()) {
-			pmic_reg_read(p, PFUZE100_SW2VOL, &value);
-			value &= ~0x3f;
-			if (is_400M)
-				value |= 0x17;
-			else
-				value |= 0x1e;
-			pmic_reg_write(p, PFUZE100_SW2VOL, value);
-		}
-
-		if (is_400M) {
-			if (is_cpu_type(MXC_CPU_MX6DL))
-				vddarm = 0x1f;
-			else
-				vddarm = 0x1b;
-		} else {
-			if (is_cpu_type(MXC_CPU_MX6DL))
-				vddarm = 0x23;
-			else
-				vddarm = 0x22;
-		}
-		pmic_reg_read(p, PFUZE100_SW1ABVOL, &value);
-		value &= ~0x3f;
-		value |= vddarm;
-		pmic_reg_write(p, PFUZE100_SW1ABVOL, value);
-
-		/* decrease VDDSOC to 1.175V */
-		pmic_reg_read(p, PFUZE100_SW1CVOL, &value);
-		value &= ~0x3f;
-		value |= 0x23;
-		pmic_reg_write(p, PFUZE100_SW1CVOL, value);
-
-		finish_anatop_bypass();
-		printf("switch to ldo_bypass mode!\n");
-	}
-}
-#endif
-#endif
 #endif
 
 int dram_init(void)
 {
+	printf("%s\n", __FUNCTION__);
 	gd->ram_size = imx_ddr_size();
 	return 0;
 }
@@ -344,15 +210,13 @@ static iomux_v3_cfg_t const uart5_pads[] = {
 
 static void setup_iomux_uart(void)
 {
-	printf("setup uart1 iomux\n");
+	printf("%s\n", __FUNCTION__);
 	imx_iomux_v3_setup_multiple_pads(uart1_pads, ARRAY_SIZE(uart1_pads));
-	printf("setup uart2 iomux\n");
 	imx_iomux_v3_setup_multiple_pads(uart2_pads, ARRAY_SIZE(uart2_pads));
-	printf("setup uart5 iomux\n");
 	imx_iomux_v3_setup_multiple_pads(uart5_pads, ARRAY_SIZE(uart5_pads));
 }
 
-
+#ifdef CONFIG_FSL_ESDHC
 // ALTANEOS USED FOR EMMC1 - CD (CARD DETECT) IS NOT IMPLEMENTED ONBOARD
 static iomux_v3_cfg_t const usdhc3_emmc1_pads[] = {
 	MX6_PAD_SD3_CLK__SD3_CLK   | MUX_PAD_CTRL(USDHC_PAD_CTRL),
@@ -383,7 +247,6 @@ static iomux_v3_cfg_t const usdhc4_emmc2_pads[] = {
 	MX6_PAD_NANDF_ALE__GPIO6_IO08 | MUX_PAD_CTRL(NO_PAD_CTRL), /* RST_B */
 };
 
-#ifdef CONFIG_FSL_ESDHC
 struct fsl_esdhc_cfg usdhc_cfg[2] = {
 	{USDHC3_BASE_ADDR},
 	{USDHC4_BASE_ADDR},
@@ -454,33 +317,7 @@ int board_mmc_init(bd_t *bis)
 #endif
 
 #undef CONFIG_MXC_SPI
-#ifdef CONFIG_MXC_SPI
-static iomux_v3_cfg_t const ecspi1_pads[] = {
-	MX6_PAD_CSI0_DAT4__ECSPI1_SCLK | MUX_PAD_CTRL(SPI_PAD_CTRL),
-	MX6_PAD_CSI0_DAT6__ECSPI1_MISO | MUX_PAD_CTRL(SPI_PAD_CTRL),
-	MX6_PAD_CSI0_DAT5__ECSPI1_MOSI | MUX_PAD_CTRL(SPI_PAD_CTRL),
-	MX6_PAD_CSI0_DAT7__GPIO5_IO25 | MUX_PAD_CTRL(NO_PAD_CTRL),
-};
-
-#define ECSPI1_CS		IMX_GPIO_NR(5, 25)
-
-static void setup_spi(void)
-{
-	int i;
-	printf("%s\n", __FUNCTION__);
-	imx_iomux_v3_setup_multiple_pads(ecspi1_pads, ARRAY_SIZE(ecspi1_pads));
-
-	for (i = 0; i < 3; i++) {
-		enable_spi_clk(1, i);
-	}
-	gpio_direction_output(ECSPI1_CS, 1);
-}
-
-int board_spi_cs_gpio(unsigned bus, unsigned cs)
-{
-	return (bus == 1 && cs == 0) ? (ECSPI1_CS) : -1;
-}
-#else
+#ifndef CONFIG_MXC_SPI
 static iomux_v3_cfg_t const ecspi1_pads[] = {
 	MX6_PAD_CSI0_DAT4__GPIO5_IO22 | MUX_PAD_CTRL(INPUT_DOWN_PAD_CTRL),
 	MX6_PAD_CSI0_DAT6__GPIO5_IO24 | MUX_PAD_CTRL(INPUT_DOWN_PAD_CTRL),
@@ -495,86 +332,8 @@ static void setup_spi_pull_down(void)
 }	
 #endif
 
-
-// ALTANEOS ETHERNET -------------------------------------------
 #undef CONFIG_FEC_MXC
-#ifdef CONFIG_FEC_MXC
-
-// ALTANEOS PAD DECLARATION
-
-static iomux_v3_cfg_t const enet_pads[] = {
-	MX6_PAD_ENET_MDIO__ENET_MDIO | MUX_PAD_CTRL(MDIO_PAD_CTRL),
-	MX6_PAD_ENET_MDC__ENET_MDC | MUX_PAD_CTRL(ENET_PAD_CTRL),
-	MX6_PAD_ENET_TXD0__ENET_TX_DATA0 | MUX_PAD_CTRL(ENET_PAD_CTRL),
-	MX6_PAD_ENET_TXD1__ENET_TX_DATA1 | MUX_PAD_CTRL(ENET_PAD_CTRL),
-	MX6_PAD_ENET_TX_EN__ENET_TX_EN | MUX_PAD_CTRL(ENET_PAD_CTRL),
-	MX6_PAD_ENET_REF_CLK__ENET_TX_CLK | MUX_PAD_CTRL(ENET_CLK_PAD_CTRL),
-	MX6_PAD_ENET_RXD0__ENET_RX_DATA0 | MUX_PAD_CTRL(ENET_PAD_CTRL),
-	MX6_PAD_ENET_RXD1__ENET_RX_DATA1 | MUX_PAD_CTRL(ENET_PAD_CTRL),
-	MX6_PAD_ENET_RX_ER__ENET_RX_ER | MUX_PAD_CTRL(ENET_PAD_CTRL),
-	MX6_PAD_ENET_CRS_DV__ENET_RX_EN | MUX_PAD_CTRL(ENET_PAD_CTRL),
-	MX6_PAD_GPIO_16__ENET_REF_CLK | MUX_PAD_CTRL(ENET_PAD_CTRL),
-};
-
-static iomux_v3_cfg_t const fec_rst_pads[] = {
-	MX6_PAD_NANDF_CS3__GPIO6_IO16 | MUX_PAD_CTRL(ENET_PAD_CTRL),
-};
-
-static void setup_iomux_fec_rst(void)
-{
-	imx_iomux_v3_setup_multiple_pads(fec_rst_pads,
-						ARRAY_SIZE(fec_rst_pads));
-}
-
-#define ENET_nRST IMX_GPIO_NR(6, 16)
-
-static void fec_reset(void)
-{
-	gpio_direction_output(ENET_nRST, 0);
-	udelay(500);
-	gpio_direction_output(ENET_nRST, 1);
-}
-
-static void setup_iomux_enet(void)
-{
-	imx_iomux_v3_setup_multiple_pads(enet_pads, ARRAY_SIZE(enet_pads));
-	
-	/* Switch reset */
-	fec_reset();
-}
-
-// ALTANEOS : KEEP BECAUSE VERY IMPORTANT
-static void setup_fec(void)
-{
-	imx_iomux_set_gpr_register(1, 21, 1, 1);
-	
-	/* Ref Manual IMX6DQPRM 36.4.522 Select Input Register */
-	u32 reg = 0x1;
-	writel(reg, 0x20e083C);
-	
-	if (is_mx6dqp()) {
-		int ret;
-
-		
-
-		// select ENET MAC0 TX clock from PLL  //
-		imx_iomux_set_gpr_register(5, 9, 1, 1);		
-		ret = enable_fec_anatop_clock(0, ENET_50MHZ);
-		if (ret)
-		    printf("Error fec anatop clock settings!\n");
-	}
-}
-
-
-int board_eth_init(bd_t *bis)
-{
-	printf("%s\n", __FUNCTION__);
-	setup_iomux_enet();
-
-
-	return cpu_eth_init(bis);
-}
-#else
+#ifndef CONFIG_FEC_MXC
 static iomux_v3_cfg_t const enet_pads[] = {
 	MX6_PAD_ENET_MDIO__GPIO1_IO22 | MUX_PAD_CTRL(INPUT_DOWN_PAD_CTRL),
 	MX6_PAD_ENET_MDC__GPIO1_IO31 | MUX_PAD_CTRL(INPUT_DOWN_PAD_CTRL),
@@ -594,13 +353,8 @@ static void setup_iomux_enet_pull_down(void)
 	imx_iomux_v3_setup_multiple_pads(enet_pads, ARRAY_SIZE(enet_pads));
 }
 #endif
-// END ALTANEOS ETHERNET -------------------------------------------
-
-
 
 // ALTANEOS LCD -------------------------------------------
-
-
 iomux_v3_cfg_t const di0_pads[] = {
 	MX6_PAD_DI0_DISP_CLK__IPU1_DI0_DISP_CLK,	/* DISP0_CLK */
 	MX6_PAD_DI0_PIN2__IPU1_DI0_PIN02,		/* DISP0_HSYNC */
@@ -648,8 +402,8 @@ static iomux_v3_cfg_t const lcd_pads[] = {
 #define DISP0_BACKLIGHT_EN IMX_GPIO_NR(1, 21)
 void do_enable_parallel_lcd(struct display_info_t const *dev)
 {
-	imx_iomux_v3_setup_multiple_pads(lcd_pads, ARRAY_SIZE(lcd_pads));
 	printf("%s\n", __FUNCTION__);
+	imx_iomux_v3_setup_multiple_pads(lcd_pads, ARRAY_SIZE(lcd_pads));
 	gpio_direction_output(DISP0_PWR_EN, 0);
 	gpio_direction_output(DISP0_BACKLIGHT_EN, 1);
 }
@@ -679,21 +433,13 @@ struct display_info_t const displays[] = {
 };
 size_t display_count = ARRAY_SIZE(displays);
 
-
-// END ALTANEOS LCD -------------------------------------------
-
-static iomux_v3_cfg_t const touch_pads[] = {
-	/* TS_IRQ || ALTANEOS nInt ? */
-	MX6_PAD_GPIO_2__GPIO1_IO02 | MUX_PAD_CTRL(FASTGPIO_PAD_CTRL),
-	/* TS_nRST */
-	MX6_PAD_GPIO_18__GPIO7_IO13 | MUX_PAD_CTRL(FASTGPIO_PAD_CTRL),
-};
-
 static void setup_display(void)
 {
 	struct mxc_ccm_reg *mxc_ccm = (struct mxc_ccm_reg *)CCM_BASE_ADDR;
 	struct iomuxc *iomux = (struct iomuxc *)IOMUXC_BASE_ADDR;
 	int reg;
+
+	printf("%s\n", __FUNCTION__);
 
 	/* Setup HSYNC, VSYNC, DISP_CLK for debugging purposes */
 	imx_iomux_v3_setup_multiple_pads(di0_pads, ARRAY_SIZE(di0_pads));
@@ -743,9 +489,18 @@ static void setup_display(void)
 	       << IOMUXC_GPR3_LVDS1_MUX_CTL_OFFSET);
 	writel(reg, &iomux->gpr[3]);
 }
+// END ALTANEOS LCD -------------------------------------------
 
 #define TOUCH_IRQ_GPIO		IMX_GPIO_NR(1, 2)
 #define TOUCH_nRST_GPIO		IMX_GPIO_NR(7, 13)
+
+
+static iomux_v3_cfg_t const touch_pads[] = {
+	/* TS_IRQ || ALTANEOS nInt ? */
+	MX6_PAD_GPIO_2__GPIO1_IO02 | MUX_PAD_CTRL(FASTGPIO_PAD_CTRL),
+	/* TS_nRST */
+	MX6_PAD_GPIO_18__GPIO7_IO13 | MUX_PAD_CTRL(FASTGPIO_PAD_CTRL),
+};
 
 int setup_touch(void)
 {
@@ -849,7 +604,6 @@ int setup_ninja(void)
 	return 0;
 }
 
-
 static iomux_v3_cfg_t const dio_pads[] = {
 	/* din0 */
 	MX6_PAD_NANDF_CS0__GPIO6_IO11 | MUX_PAD_CTRL(NO_PAD_CTRL),
@@ -865,7 +619,6 @@ static iomux_v3_cfg_t const dio_pads[] = {
 #define DIN1_GPIO	IMX_GPIO_NR(6,14)
 #define RELAY0_GPIO	IMX_GPIO_NR(6,10)
 #define RELAY1_GPIO	IMX_GPIO_NR(6,9)
-
 
 int setup_dio(void)
 {
@@ -903,82 +656,6 @@ int setup_splash(void)
 	return 0;
 }
 
-#ifdef CONFIG_USB_EHCI_MX6
-#define USB_OTHERREGS_OFFSET	0x800
-#define UCTRL_PWR_POL		(1 << 9)
-
-static iomux_v3_cfg_t const usb_otg_pads[] = {
-	MX6_PAD_EIM_D22__USB_OTG_PWR | MUX_PAD_CTRL(NO_PAD_CTRL),
-};
-
-static iomux_v3_cfg_t const usb_hc1_pads[] = {
-	MX6_PAD_EIM_D21__USB_OTG_OC | MUX_PAD_CTRL(NO_PAD_CTRL),
-};
-
-static void setup_usb(void)
-{
-	imx_iomux_v3_setup_multiple_pads(usb_otg_pads,
-					 ARRAY_SIZE(usb_otg_pads));
-
-	/*
-	 * set daisy chain for otg_pin_id on 6q.
-	 * for 6dl, this bit is reserved
-	 */
-	imx_iomux_set_gpr_register(1, 13, 1, 0);
-
-	imx_iomux_v3_setup_multiple_pads(usb_hc1_pads,
-					 ARRAY_SIZE(usb_hc1_pads));
-}
-
-int board_ehci_hcd_init(int port)
-{
-	u32 *usbnc_usb_ctrl;
-
-	if (port > 1)
-		return -EINVAL;
-
-	usbnc_usb_ctrl = (u32 *)(USB_BASE_ADDR + USB_OTHERREGS_OFFSET +
-				 port * 4);
-
-	setbits_le32(usbnc_usb_ctrl, UCTRL_PWR_POL);
-
-	return 0;
-}
-
-int board_ehci_power(int port, int on)
-{
-	switch (port) {
-	case 0:
-		break;
-	case 1:
-		if (on)
-			gpio_direction_output(IMX_GPIO_NR(1, 29), 1);
-		else
-			gpio_direction_output(IMX_GPIO_NR(1, 29), 0);
-		break;
-	default:
-		printf("MXC USB port %d not yet supported\n", port);
-		return -EINVAL;
-	}
-
-	return 0;
-}
-#endif
-
-int board_early_init_f(void)
-{
-	printf("%s\n", __FUNCTION__);
-	setup_iomux_uart();
-#ifndef CONFIG_FEC_MXC
-	setup_iomux_enet_pull_down();
-#endif
-#ifndef CONFIG_MXC_SPI
-	setup_spi_pull_down();
-#endif
-	setup_display();
-	return 0;
-}
-
 #define EEPROM_DATA_DEVADDR    0x50    /* User data sector of the AT24MAC */
 #define EEPROM_DATA_DEVADDR1   0x53    /* User data sector of 2nd AT24MAC */
 #define EEPROM_MAC_DEVADDR     0x58    /* RO serial sector of the AT24MAC */
@@ -988,10 +665,11 @@ int board_early_init_f(void)
 
 int misc_init_r(void)
 {
-	printf("%s\n", __FUNCTION__);
 	uchar buf[6];
 	char str[18];
 
+	printf("%s\n", __FUNCTION__);
+	
 	/* Read ethaddr from EEPROM */
 	if (i2c_read(EEPROM_MAC_DEVADDR, EEPROM_MAC_REG_MAC, 1, buf, 6) == 0) {
 		sprintf(str, "%02X:%02X:%02X:%02X:%02X:%02X",
@@ -1035,42 +713,35 @@ int misc_init_r(void)
 	return 0;
 }
 
+int board_early_init_f(void)
+{
+	printf("%s\n", __FUNCTION__);
+	setup_iomux_uart();
+#ifndef CONFIG_FEC_MXC
+	setup_iomux_enet_pull_down();
+#endif
+#ifndef CONFIG_MXC_SPI
+	setup_spi_pull_down();
+#endif
+	setup_display();
+	return 0;
+}
+
 int board_init(void)
 {
 	printf("%s\n", __FUNCTION__);
 	/* address of boot parameters */
 	gd->bd->bi_boot_params = PHYS_SDRAM + 0x100;
-#ifdef CONFIG_FEC_MXC
-	setup_iomux_fec_rst();
-	fec_reset();
-#endif
 	setup_dio();
 	
 #ifdef CONFIG_SYS_I2C_MXC
 	printf("setup_i2c\n");
 	setup_i2c(0, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info1);
 	setup_i2c(1, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info2);
+#endif
 	setup_touch();
-#endif
-
-#ifdef CONFIG_USB_EHCI_MX6
-	setup_usb();
-#endif
-
-#ifdef CONFIG_CMD_SATA
-	setup_sata();
-#endif
-
-#if defined(CONFIG_MXC_SPI)
-	setup_spi();
-#endif
-
 	setup_led();
 	setup_ninja();
-	
-#ifdef	CONFIG_FEC_MXC
-	setup_fec();
-#endif
 	
 	printf("%s Finish success\n", __FUNCTION__);
 	return 0;
@@ -1089,7 +760,7 @@ int board_late_init(void)
 #ifdef CONFIG_CMD_BMODE
 	add_board_boot_modes(board_boot_modes);
 #endif
-	misc_init_r();
+
 #ifdef CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
 	setenv("board_name", "IMX6QPFATMANINVIEWX");
 
@@ -1115,118 +786,3 @@ int checkboard(void)
 	puts("Board: IMX6QP FATMAN INVIEWX\n");
 	return 0;
 }
-
-#ifdef CONFIG_FSL_FASTBOOT
-
-void board_fastboot_setup(void)
-{
-	switch (get_boot_device()) {
-#if defined(CONFIG_FASTBOOT_STORAGE_SATA)
-	case SATA_BOOT:
-		if (!getenv("fastboot_dev"))
-			setenv("fastboot_dev", "sata");
-		if (!getenv("bootcmd"))
-			setenv("bootcmd", "boota sata");
-		break;
-#endif /*CONFIG_FASTBOOT_STORAGE_SATA*/
-#if defined(CONFIG_FASTBOOT_STORAGE_MMC)
-	case SD2_BOOT:
-	case MMC2_BOOT:
-	    if (!getenv("fastboot_dev"))
-			setenv("fastboot_dev", "mmc0");
-	    if (!getenv("bootcmd"))
-			setenv("bootcmd", "boota mmc0");
-	    break;
-	case SD3_BOOT:
-	case MMC3_BOOT:
-	    if (!getenv("fastboot_dev"))
-			setenv("fastboot_dev", "mmc1");
-	    if (!getenv("bootcmd"))
-			setenv("bootcmd", "boota mmc1");
-	    break;
-	case MMC4_BOOT:
-	    if (!getenv("fastboot_dev"))
-			setenv("fastboot_dev", "mmc2");
-	    if (!getenv("bootcmd"))
-			setenv("bootcmd", "boota mmc2");
-	    break;
-#endif /*CONFIG_FASTBOOT_STORAGE_MMC*/
-	default:
-		printf("unsupported boot devices\n");
-		break;
-	}
-
-}
-
-#ifdef CONFIG_ANDROID_RECOVERY
-
-#define GPIO_VOL_DN_KEY IMX_GPIO_NR(1, 5)
-iomux_v3_cfg_t const recovery_key_pads[] = {
-	(MX6_PAD_GPIO_5__GPIO1_IO05 | MUX_PAD_CTRL(NO_PAD_CTRL)),
-};
-
-int check_recovery_cmd_file(void)
-{
-    int button_pressed = 0;
-    int recovery_mode = 0;
-
-    recovery_mode = recovery_check_and_clean_flag();
-
-    /* Check Recovery Combo Button press or not. */
-	imx_iomux_v3_setup_multiple_pads(recovery_key_pads,
-			ARRAY_SIZE(recovery_key_pads));
-
-    gpio_direction_input(GPIO_VOL_DN_KEY);
-
-    if (gpio_get_value(GPIO_VOL_DN_KEY) == 0) { /* VOL_DN key is low assert */
-		button_pressed = 1;
-		printf("Recovery key pressed\n");
-    }
-
-    return recovery_mode || button_pressed;
-}
-
-void board_recovery_setup(void)
-{
-	int bootdev = get_boot_device();
-
-	switch (bootdev) {
-#if defined(CONFIG_FASTBOOT_STORAGE_SATA)
-	case SATA_BOOT:
-		if (!getenv("bootcmd_android_recovery"))
-			setenv("bootcmd_android_recovery",
-				"boota sata recovery");
-		break;
-#endif /*CONFIG_FASTBOOT_STORAGE_SATA*/
-#if defined(CONFIG_FASTBOOT_STORAGE_MMC)
-	case SD2_BOOT:
-	case MMC2_BOOT:
-		if (!getenv("bootcmd_android_recovery"))
-			setenv("bootcmd_android_recovery",
-				"boota mmc0 recovery");
-		break;
-	case SD3_BOOT:
-	case MMC3_BOOT:
-		if (!getenv("bootcmd_android_recovery"))
-			setenv("bootcmd_android_recovery",
-				"boota mmc1 recovery");
-		break;
-	case MMC4_BOOT:
-		if (!getenv("bootcmd_android_recovery"))
-			setenv("bootcmd_android_recovery",
-				"boota mmc2 recovery");
-		break;
-#endif /*CONFIG_FASTBOOT_STORAGE_MMC*/
-	default:
-		printf("Unsupported bootup device for recovery: dev: %d\n",
-			bootdev);
-		return;
-	}
-
-	printf("setup env for recovery..\n");
-	setenv("bootcmd", "run bootcmd_android_recovery");
-}
-
-#endif /*CONFIG_ANDROID_RECOVERY*/
-
-#endif /*CONFIG_FSL_FASTBOOT*/

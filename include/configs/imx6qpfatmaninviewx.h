@@ -15,10 +15,13 @@
 #include "imx6_spl.h"
 #endif
 
+#define CONFIG_SYS_FSL_USDHC_NUM	2
+#define CONFIG_SYS_MMC_ENV_DEV		1	/* SDHC3 emmc1*/
+#define CONFIG_SYS_MMC_ENV_PART     0       /* user partition */		
+
 #define CONFIG_MACH_TYPE	3980
 #define CONFIG_MXC_UART_BASE	UART1_BASE
 #define CONFIG_CONSOLE_DEV		"ttymxc0"
-#define CONFIG_MMCROOT			"/dev/mmcblk3p2"  /* SDHC4 */
 
 #if defined(CONFIG_MX6QP)
 #define PHYS_SDRAM_SIZE		(1u * 1024 * 1024 * 1024)
@@ -32,9 +35,6 @@
 
 #include "imx6qpfatmaninviewx_common.h"
 
-#define CONFIG_SYS_FSL_USDHC_NUM	2
-#define CONFIG_SYS_MMC_ENV_DEV		0	/* SDHC3 emmc1*/
-#define CONFIG_SYS_MMC_ENV_PART                0       /* user partition */
 
 #ifdef CONFIG_SYS_USE_SPINOR
 #define CONFIG_SF_DEFAULT_CS   0

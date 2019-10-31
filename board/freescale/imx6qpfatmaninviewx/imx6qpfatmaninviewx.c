@@ -480,7 +480,8 @@ int board_spi_cs_gpio(unsigned bus, unsigned cs)
 
 
 // ALTANEOS ETHERNET -------------------------------------------
-
+#undef CONFIG_FEC_MXC
+#ifdef CONFIG_FEC_MXC
 
 // ALTANEOS PAD DECLARATION
 
@@ -547,14 +548,16 @@ static void setup_fec(void)
 	}
 }
 
+
 int board_eth_init(bd_t *bis)
 {
 	printf("%s\n", __FUNCTION__);
 	setup_iomux_enet();
 
+
 	return cpu_eth_init(bis);
 }
-
+#endif
 // END ALTANEOS ETHERNET -------------------------------------------
 
 
@@ -995,9 +998,10 @@ int board_init(void)
 	printf("%s\n", __FUNCTION__);
 	/* address of boot parameters */
 	gd->bd->bi_boot_params = PHYS_SDRAM + 0x100;
-
+#ifdef CONFIG_FEC_MXC
 	setup_iomux_fec_rst();
 	fec_reset();
+#endif
 	setup_dio();
 	
 #ifdef CONFIG_SYS_I2C_MXC
@@ -1023,7 +1027,6 @@ int board_init(void)
 	setup_ninja();
 	
 #ifdef	CONFIG_FEC_MXC
-
 	setup_fec();
 #endif
 	

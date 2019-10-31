@@ -84,6 +84,8 @@ DECLARE_GLOBAL_DATA_PTR;
 	PAD_CTL_SPEED_MED |		\
 	PAD_CTL_DSE_40ohm | PAD_CTL_SRE_FAST)
 
+#define INPUT_DOWN_PAD_CTRL (PAD_CTL_HYS | PAD_CTL_PUS_100K_DOWN | PAD_CTL_PUE | PAD_CTL_SRE_FAST)
+
 #define I2C_PMIC	0
 
 #ifdef CONFIG_SYS_I2C_MXC
@@ -450,6 +452,7 @@ int board_mmc_init(bd_t *bis)
 }
 #endif
 
+#undef CONFIG_MXC_SPI
 #ifdef CONFIG_MXC_SPI
 static iomux_v3_cfg_t const ecspi1_pads[] = {
 	MX6_PAD_CSI0_DAT4__ECSPI1_SCLK | MUX_PAD_CTRL(SPI_PAD_CTRL),
@@ -476,6 +479,19 @@ int board_spi_cs_gpio(unsigned bus, unsigned cs)
 {
 	return (bus == 1 && cs == 0) ? (ECSPI1_CS) : -1;
 }
+#else
+static iomux_v3_cfg_t const ecspi1_pads[] = {
+	MX6_PAD_CSI0_DAT4__GPIO5_IO22 | MUX_PAD_CTRL(INPUT_DOWN_PAD_CTRL),
+	MX6_PAD_CSI0_DAT6__GPIO5_IO24 | MUX_PAD_CTRL(INPUT_DOWN_PAD_CTRL),
+	MX6_PAD_CSI0_DAT5__GPIO5_IO23 | MUX_PAD_CTRL(INPUT_DOWN_PAD_CTRL),
+	MX6_PAD_CSI0_DAT7__GPIO5_IO25 | MUX_PAD_CTRL(INPUT_DOWN_PAD_CTRL),
+};
+
+static void setup_spi_pull_down(void)
+{
+	printf("%s\n", __FUNCTION__);
+	imx_iomux_v3_setup_multiple_pads(ecspi1_pads, ARRAY_SIZE(ecspi1_pads));
+}	
 #endif
 
 
@@ -556,6 +572,24 @@ int board_eth_init(bd_t *bis)
 
 
 	return cpu_eth_init(bis);
+}
+#else
+static iomux_v3_cfg_t const enet_pads[] = {
+	MX6_PAD_ENET_MDIO__GPIO1_IO22 | MUX_PAD_CTRL(INPUT_DOWN_PAD_CTRL),
+	MX6_PAD_ENET_MDC__GPIO1_IO31 | MUX_PAD_CTRL(INPUT_DOWN_PAD_CTRL),
+	MX6_PAD_ENET_TXD0__GPIO1_IO30 | MUX_PAD_CTRL(INPUT_DOWN_PAD_CTRL),
+	MX6_PAD_ENET_TXD1__GPIO1_IO29 | MUX_PAD_CTRL(INPUT_DOWN_PAD_CTRL),
+	MX6_PAD_ENET_TX_EN__GPIO1_IO28 | MUX_PAD_CTRL(INPUT_DOWN_PAD_CTRL),
+	MX6_PAD_ENET_REF_CLK__GPIO1_IO23 | MUX_PAD_CTRL(INPUT_DOWN_PAD_CTRL),
+	MX6_PAD_ENET_RXD0__GPIO1_IO27 | MUX_PAD_CTRL(INPUT_DOWN_PAD_CTRL),
+	MX6_PAD_ENET_RXD1__GPIO1_IO26 | MUX_PAD_CTRL(INPUT_DOWN_PAD_CTRL),
+	MX6_PAD_ENET_RX_ER__GPIO1_IO24 | MUX_PAD_CTRL(INPUT_DOWN_PAD_CTRL),
+	MX6_PAD_ENET_CRS_DV__GPIO1_IO25 | MUX_PAD_CTRL(INPUT_DOWN_PAD_CTRL),
+	MX6_PAD_GPIO_16__GPIO7_IO11 | MUX_PAD_CTRL(INPUT_DOWN_PAD_CTRL),
+};
+static void setup_iomux_enet_pull_down(void)
+{
+	imx_iomux_v3_setup_multiple_pads(enet_pads, ARRAY_SIZE(enet_pads));
 }
 #endif
 // END ALTANEOS ETHERNET -------------------------------------------
@@ -933,6 +967,12 @@ int board_early_init_f(void)
 {
 	printf("%s\n", __FUNCTION__);
 	setup_iomux_uart();
+#ifndef CONFIG_FEC_MXC
+	setup_iomux_enet_pull_down();
+#endif
+#ifndef CONFIG_MXC_SPI
+	setup_spi_pull_down();
+#endif
 	setup_display();
 	return 0;
 }
@@ -1019,7 +1059,7 @@ int board_init(void)
 	setup_sata();
 #endif
 
-#if defined(CONFIG_MXC_SPI) || defined(CONFIG_FSL_QSPI)
+#if defined(CONFIG_MXC_SPI)
 	setup_spi();
 #endif
 

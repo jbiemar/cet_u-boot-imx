@@ -589,6 +589,7 @@ static iomux_v3_cfg_t const enet_pads[] = {
 };
 static void setup_iomux_enet_pull_down(void)
 {
+	printf("%s\n", __FUNCTION__);
 	imx_iomux_v3_setup_multiple_pads(enet_pads, ARRAY_SIZE(enet_pads));
 }
 #endif
